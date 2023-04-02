@@ -1,0 +1,28 @@
+.edit-post-card {
+    width: 800px;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.edit-post-title {
+    text-align: center;
+    font-size: 35px;
+    color: blue;
+}
+
+.label-title {
+    text-align: left;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.label-text {
+    text-align: left;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.form-control {
+    margin-bottom: 15px;
+}

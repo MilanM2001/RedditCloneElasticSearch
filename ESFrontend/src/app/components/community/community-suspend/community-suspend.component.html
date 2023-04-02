@@ -1,0 +1,25 @@
+<div class="form-group">
+    <form [formGroup]="formGroup" (ngSubmit)="suspend()">
+        <mat-card class="suspend-community-card">
+            <mat-card-title class="suspend-community-title">Suspending {{community.name}}</mat-card-title>
+            <mat-card-content>
+                <div class="form-group">
+
+                    <label class="label-suspended_reason">Suspend Reason</label>
+                    <textarea type="text" formControlName="suspended_reason" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f['suspended_reason'].errors }"></textarea>
+                    <div *ngIf="submitted && f['suspended_reason'].errors" class="invalid-feedback">
+                        <div *ngIf="f['suspended_reason'].errors['required']">Reason is required.</div>
+                        <div *ngIf="f['suspended_reason'].errors['minlength']">Reason must be at least 5 characters.</div>
+                        <div *ngIf="f['suspended_reason'].errors['maxlength']">Reason must not exceed 300 characters.</div>
+                    </div>
+                    
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <button style='margin-right:16px' class="btn btn-success" (ngSubmit)="suspend()">Update</button>
+                <button style='margin-right:16px' type="button" class="btn btn-danger" [routerLink]="['/Communities']">Back</button>
+            </mat-card-actions>
+        </mat-card>
+    </form>
+</div>

@@ -1,0 +1,64 @@
+<div class="row">
+     <div> <!-- <div class="col-7 col-lg-8"> -->
+        <mat-card class="add-post-card">
+            <mat-card-title class="card-title">Creating a Post on</mat-card-title>
+            <mat-card-title class="card-title-name">{{community.name}}</mat-card-title>
+            <div class="form-group">
+                <form [formGroup]="formGroup">
+
+                    <div class="mb-3 w-50">
+                        <mat-card-title class="card-title">Title</mat-card-title>
+                        <input type="text" class="form-control" formControlName="title"
+                            placeholder="Enter your post Title here."
+                            [ngClass]="{ 'is-invalid': submitted && f['title'].errors }">
+                        <div *ngIf="submitted && f['title'].errors" class="invalid-feedback">
+                            <div *ngIf="f['title'].errors['required']">Title is required.</div>
+                            <div *ngIf="f['title'].errors['minlength']">Title must be at least 3 characters long.</div>
+                            <div *ngIf="f['title'].errors['maxlength']">Title must not exceed 35 characters.</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 w-25">
+                        <mat-card-title class="card-title">Flair</mat-card-title>
+                        <mat-select class="form-control" formControlName="flair_id" id="flair_id" 
+                            [ngClass]="{ 'is-invalid':submitted && f['flair_id'].errors}">
+                            <div *ngIf="submitted && f['flair_id'].errors" class="invalid-feedback"></div>
+                            <mat-option [value]="0">None</mat-option>
+                            <mat-option *ngFor="let flair of flairs" [value]="flair.flair_id">
+                                {{flair.name}}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+
+                    <div class="mb-3 w-50">
+                        <mat-card-title class="card-title">Text</mat-card-title>
+                        <textarea type="text" class="form-control" formControlName="text" id="text" rows="2"
+                            placeholder="Enter your post Text here."
+                            [ngClass]="{ 'is-invalid': submitted && f['text'].errors}"></textarea>
+                        <div *ngIf="submitted && f['text'].errors" class="invalid-feedback">
+                            <div *ngIf="f['text'].errors['required']">Text is required.</div>
+                            <div *ngIf="f['text'].errors['minlength']">Text must be at least 5 characters long.</div>
+                            <div *ngIf="f['text'].errors['maxlength']">Title must not exceed 300 characters.</div>
+                        </div>
+                        <div class="form-group form-check">
+                            <button type="submit" class="btn btn-primary" (click)="onSubmit()">Add Post</button>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </mat-card>
+    </div>
+
+    <!-- <div class="col-5 col-lg-4">
+        <mat-card class="community-view-rules-card">
+            <mat-card-title class="community-view-rules-card-title">
+                Be sure to follow the Rules of this Community:
+            </mat-card-title>
+            <mat-card-content>
+                -Rule1 <br> -Rule2 <br> -Rule3 <br> -Rule4
+            </mat-card-content>
+        </mat-card>
+    </div> -->
+</div>

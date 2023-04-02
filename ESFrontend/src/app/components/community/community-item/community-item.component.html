@@ -1,0 +1,10 @@
+<mat-card class="community-card">
+    <div>
+      <mat-card-title [routerLink]="['/Community-View', community.community_id]" class="community-name">{{community.name}}
+        <img style="float:left" class="image" src="https://i.redd.it/m1pd3gtxch431.jpg">
+      </mat-card-title>
+    </div>
+      <mat-card-content>
+        <p class="community-description">{{community.description}}</p>
+      </mat-card-content>
+</mat-card>

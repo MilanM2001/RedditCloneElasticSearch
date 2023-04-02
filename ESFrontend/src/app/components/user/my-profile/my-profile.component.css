@@ -1,0 +1,39 @@
+.user-card {
+    max-width: 530px;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.username {
+    text-align: center;
+    font-size: 30px;
+    margin-bottom: 30px;
+}
+
+.display-name {
+    text-align: center;
+    font-size: 25px;
+}
+
+.display-name-user {
+    text-align: center;
+    font-size: 22px;
+}
+
+.email {
+    text-align: center;
+    font-size: 25px;
+}
+
+.email-user {
+    text-align: center;
+    font-size: 22px;
+}
+
+.my-posts {
+    text-align: center;
+    font-size: 30px;
+    margin-top: 15px;
+    margin-bottom: 22px;
+}

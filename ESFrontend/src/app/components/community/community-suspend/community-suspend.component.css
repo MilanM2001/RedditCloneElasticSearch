@@ -1,0 +1,18 @@
+.suspend-community-card {
+    width: 800px;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.suspend-community-title {
+    text-align: center;
+    font-size: 35px;
+    color: blue;
+}
+
+.label-suspended_reason {
+    text-align: left;
+    font-size: 20px;
+    margin-bottom: 10px;
+}

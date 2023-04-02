@@ -1,0 +1,25 @@
+<div class="form-group">
+    <form [formGroup]="formGroup" (ngSubmit)="update()">
+        <mat-card class="edit-community-card">
+            <mat-card-title class="edit-community-title">Updating {{community.name}}</mat-card-title>
+            <mat-card-content>
+                <div class="form-group">
+
+                    <label class="label-description">Description</label>
+                    <textarea type="text" formControlName="description" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f['description'].errors }"></textarea>
+                    <div *ngIf="submitted && f['description'].errors" class="invalid-feedback">
+                        <div *ngIf="f['description'].errors['required']">Description is required.</div>
+                        <div *ngIf="f['description'].errors['minlength']">Description must be at least 5 characters.</div>
+                        <div *ngIf="f['description'].errors['maxlength']">Description must not exceed 300 characters.</div>
+                    </div>
+                    
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <button style='margin-right:16px' class="btn btn-success" (ngSubmit)="update()">Update</button>
+                <button style='margin-right:16px' type="button" class="btn btn-danger" [routerLink]="['/communities']">Back</button>
+            </mat-card-actions>
+        </mat-card>
+    </form>
+</div>

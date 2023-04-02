@@ -1,0 +1,46 @@
+.add-rule-card {
+    width: 800px;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.rules-card {
+    width: 300px;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: 870px;
+}
+
+.card-title-main {
+    text-align: center;
+    font-size: 30px;
+}
+
+.card-title {
+    text-align: center;
+    font-size: 20px;
+}
+
+.card-title-name {
+    text-align: center;
+    font-size: 25px;
+    color: blue;
+}
+
+.rule-name, .rule-description {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 20px;
+}
+
+.btn-primary {
+    float: right;
+    margin-top: 30px;
+}
+
+.btn-success {
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 30px;
+}

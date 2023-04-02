@@ -1,0 +1,41 @@
+<div>
+    <div>
+        <mat-card class="add-rule-card">
+            <mat-card-title class="card-title-main">Adding a Rule to {{community.name}}</mat-card-title>
+
+            <div class="form-group">
+                <form [formGroup]="ruleFormGroup">
+
+                    <div class="form-group col-3">
+                        <mat-card-title class="rule-name">Rule Name</mat-card-title>
+                        <input type="text" maxlength="16" class="form-control" formControlName="name"
+                            [ngClass]="{ 'is-invalid': submittedRule && ruleGroup['name'].errors}">
+                        <div *ngIf="submittedRule && ruleGroup['name'].errors" class="invalid-feedback">
+                            <div *ngIf="ruleGroup['name'].errors['required']">Name is required.</div>
+                            <div *ngIf="ruleGroup['name'].errors['minlength']">Name must be at least 3 characters
+                                long.</div>
+                            <div *ngIf="ruleGroup['name'].errors['maxlength']">Name must not exceed 15 characters.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-6">
+                        <mat-card-title class="rule-description">Rule Description</mat-card-title>
+                        <input type="text" maxlength="51" class="form-control" formControlName="description"
+                            [ngClass]="{ 'is-invalid': submittedRule && ruleGroup['description'].errors}">
+                        <div *ngIf="submittedRule && ruleGroup['description'].errors" class="invalid-feedback">
+                            <div *ngIf="ruleGroup['description'].errors['required']">Description is required.</div>
+                            <div *ngIf="ruleGroup['description'].errors['minlength']">Name must be at least 3
+                                characters long.</div>
+                            <div *ngIf="ruleGroup['description'].errors['maxlength']">Name must not exceed 50
+                                characters.</div>
+                        </div>
+                        <button (click)="onSubmit()" class="btn btn-success">Add Rule</button>
+                    </div>
+
+                </form>
+            </div>
+
+        </mat-card>
+    </div>
+</div>

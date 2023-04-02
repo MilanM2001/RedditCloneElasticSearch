@@ -1,0 +1,25 @@
+.community-card {
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+}
+
+.community-name {
+  font-size: 30px;
+  text-align: left;
+  color: blue;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.community-description {
+  font-size: 20px;
+  text-align: left;
+}
+
+.image {
+  max-width: 70px;
+  max-height: 70px;
+  clip-path: circle();
+}

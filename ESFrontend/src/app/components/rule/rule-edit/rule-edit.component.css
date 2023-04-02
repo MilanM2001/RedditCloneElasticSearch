@@ -1,0 +1,28 @@
+.edit-rule-card {
+    width: 800px;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.edit-rule-title {
+    text-align: center;
+    font-size: 35px;
+    color: blue;
+}
+
+.label-name {
+    text-align: left;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.label-description {
+    text-align: left;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.form-control {
+    margin-bottom: 15px;
+}

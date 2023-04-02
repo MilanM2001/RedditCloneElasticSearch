@@ -1,0 +1,39 @@
+<div>
+    <mat-card class="community-view-card">
+        <mat-card-title class="community-view-card-title">{{community.name}}</mat-card-title>
+        <mat-card-subtitle class="community-view-card-subtitle">{{community.description}}</mat-card-subtitle>
+            <mat-select *ngIf="isLoggedIn()" placeholder="Moderator Options" (selectionChange)="navigateTo($event.value)" class="mb-3 w-25">
+                <mat-option style="color: green" [value]="'/Community-Edit'">Edit</mat-option>
+                <mat-option style="color: red" [value]="'/Community-Suspend'">Suspend</mat-option>
+            </mat-select>
+    </mat-card>
+</div>
+
+<div class="row">
+
+    <div class="col-7 col-lg-8">
+        <app-post-list *ngIf="posts.length > 0" [posts]="posts"></app-post-list>
+    </div>
+
+    <div class="col-5 col-lg-4">
+        <a *ngIf="isLoggedIn()" [routerLink]="['/Post-Add', community.community_id]"><button class="btn btn-primary">Create a Post</button></a>
+        <mat-card class="community-view-rules-card">
+            <mat-card-title class="community-view-rules-card-title">Community Rules:</mat-card-title>
+            <mat-card-content *ngFor="let rule of rules">
+                <mat-card-header class="community-rules-header">{{rule.name}} <mat-icon *ngIf="isLoggedIn()" class="edit-icon" [routerLink]="['/Rule-Edit', rule.rule_id]">edit</mat-icon></mat-card-header>
+            </mat-card-content>
+        </mat-card>
+        <a *ngIf="isLoggedIn()" [routerLink]="['/Rule-Add', community.community_id]"><button class="btn btn-danger">Add Rule</button></a>
+    </div>
+
+    <!-- <div class="col-5 col-lg-4">
+        <mat-card class="community-view-rules-card">
+            <mat-card-title class="community-view-rules-card-title">Community Flairs:</mat-card-title>
+            <mat-card-content *ngFor="let flair of flairs">
+                <mat-card-header class="community-rules-header">{{flair.name}} <mat-icon class="edit-icon" [routerLink]="['/flair-edit', flair.flairId]">edit</mat-icon></mat-card-header>
+            </mat-card-content>
+        </mat-card>
+        <a [routerLink]="['/rule-add', community.community_id]"><button class="btn btn-danger">Add Flairs</button></a>
+    </div> -->
+
+</div>

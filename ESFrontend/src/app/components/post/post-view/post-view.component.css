@@ -1,0 +1,59 @@
+.post-card {
+  max-width: 530px;
+  margin-top: 30px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.community-card {
+  max-width: 320px;
+  margin-top: 30px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.post-user {
+  text-align: left;
+  font-size: 15px;
+  margin-bottom: 15px;
+}
+
+.post-title {
+  font-size: 22px;
+  text-align: left;
+  color:black;
+  margin-bottom: 20px;
+}
+
+.post-subtitle {
+  font-size: 20px;
+  text-align: left;
+  color: black;
+}
+
+.community-title {
+  font-size: 30px;
+  text-align: center;
+  color:blue;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.btn-warning {
+  margin-top: 5px;
+  margin-right: 10px;
+  margin-left: 500px;
+  margin-bottom: 30px;
+}
+
+.btn-danger {
+  margin-top: 5px;
+  margin-left: 10px;
+  margin-bottom: 30px;
+}
+
+.post-flair {
+  font-size: 15px;
+  text-align: left;
+  color: red;
+}

@@ -1,0 +1,81 @@
+.mb-3 {
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 30px;
+}
+
+.add-community-card {
+    width: 1000px;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.rules-card {
+    width: 300px;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: 870px;
+}
+
+.card-title-main {
+    text-align: center;
+    font-size: 30px;
+}
+
+.card-title {
+    text-align: center;
+    font-size: 20px;
+}
+
+.card-title-name {
+    text-align: center;
+    font-size: 25px;
+    color: blue;
+}
+
+.rule-name, .rule-description {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 20px;
+}
+
+.btn-primary {
+    margin-top: 10px;
+    float: right;
+}
+
+.rules-card {
+    max-width: 300px;
+    margin-top: 30px;
+    margin-left: 200px;
+    margin-bottom: 30px;
+}
+
+.rules-card-title {
+    font-size: 25px;
+    color: red;
+}
+
+.flairs-card {
+    max-width: 300px;
+    margin-top: 30px;
+    margin-left: 200px;
+    margin-bottom: 30px;
+}
+
+.flairs-card-title {
+    font-size: 25px;
+    color: red;
+}
+
+
+
+.float-container {
+    padding: 20px;
+}
+
+.float-child {
+    width: 50%;
+    float: left;
+}  
