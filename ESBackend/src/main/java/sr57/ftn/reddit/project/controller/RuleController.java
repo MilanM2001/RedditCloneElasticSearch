@@ -1,7 +1,6 @@
 package sr57.ftn.reddit.project.controller;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +12,6 @@ import sr57.ftn.reddit.project.model.dto.ruleDTOs.UpdateRuleDTO;
 import sr57.ftn.reddit.project.model.entity.Rule;
 import sr57.ftn.reddit.project.service.CommunityService;
 import sr57.ftn.reddit.project.service.RuleService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/rules")

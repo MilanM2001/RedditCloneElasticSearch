@@ -8,12 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs.AddElasticCommunityDTO;
 import sr57.ftn.reddit.project.elasticservice.CommunityElasticService;
 import sr57.ftn.reddit.project.model.dto.communityDTOs.*;
 import sr57.ftn.reddit.project.model.dto.flairDTOs.FlairDTO;
 import sr57.ftn.reddit.project.model.dto.postDTOs.PostDTO;
 import sr57.ftn.reddit.project.model.dto.ruleDTOs.RuleDTO;
-import sr57.ftn.reddit.project.model.elasticmodel.CommunityElastic;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
 import sr57.ftn.reddit.project.model.entity.*;
 import sr57.ftn.reddit.project.service.*;
 
@@ -54,46 +55,64 @@ public class CommunityController {
     @CrossOrigin
     public ResponseEntity<List<CommunityDTO>> GetAll() {
         List<Community> communities = communityService.findAllNonSuspended();
-
         List<CommunityDTO> communitiesDTO = modelMapper.map(communities, new TypeToken<List<CommunityDTO>>() {
         }.getType());
+
         return new ResponseEntity<>(communitiesDTO, HttpStatus.OK);
     }
 
     @GetMapping("/single/{community_id}")
     public ResponseEntity<CommunityDTO> GetCommunity(@PathVariable("community_id") Integer community_id) {
         Community community = communityService.findOne(community_id);
-        return community == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(modelMapper.map(community, CommunityDTO.class), HttpStatus.OK);
+        CommunityDTO communityDTO = modelMapper.map(community, CommunityDTO.class);
+
+        return new ResponseEntity<>(communityDTO, HttpStatus.OK);
+//        return community == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(modelMapper.map(community, CommunityDTO.class), HttpStatus.OK);
     }
 
     @GetMapping(value = "/posts/{community_id}")
     public ResponseEntity<List<PostDTO>> GetCommunityPosts(@PathVariable Integer community_id) {
         List<Post> posts = postService.findPostsByCommunityId(community_id);
-
         List<PostDTO> postsDTO = modelMapper.map(posts, new TypeToken<List<PostDTO>>() {}.getType());
+
         return new ResponseEntity<>(postsDTO, HttpStatus.OK);
     }
 
     @GetMapping(value = "/rules/{community_id}")
     public ResponseEntity<List<RuleDTO>> GetCommunityRules(@PathVariable Integer community_id) {
         List<Rule> rules = ruleService.findRulesByCommunityId(community_id);
-
         List<RuleDTO> rulesDTO = modelMapper.map(rules, new TypeToken<List<RuleDTO>>() {}.getType());
+
         return new ResponseEntity<>(rulesDTO, HttpStatus.OK);
     }
 
     @GetMapping(value = "/flairs/{community_id}")
     public ResponseEntity<List<FlairDTO>> GetCommunityFlairs(@PathVariable Integer community_id) {
         List<Flair> flairs = flairService.findFlairsByCommunityId(community_id);
-
         List<FlairDTO> flairsDTO = modelMapper.map(flairs, new TypeToken<List<FlairDTO>>() {}.getType());
+
         return new ResponseEntity<>(flairsDTO, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/findByName/{name}")
-    public ResponseEntity<List<CommunityElastic>> GetByName(@PathVariable String name) {
-        List<CommunityElastic> communityByName = communityElasticService.findByName(name);
-        return new ResponseEntity<>(communityByName, HttpStatus.OK);
+    @GetMapping(value = "/findAllByDescription/{description}")
+    public ResponseEntity<List<ElasticCommunity>> GetAllByDescription(@PathVariable String description) {
+        List<ElasticCommunity> communities = communityElasticService.findAllByDescription(description);
+
+        return new ResponseEntity<>(communities, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/findAllByName/{name}")
+    public ResponseEntity<List<ElasticCommunity>> GetAllByName(@PathVariable String name) {
+        List<ElasticCommunity> communities = communityElasticService.findAllByName(name);
+
+        return new ResponseEntity<>(communities, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/findById/{community_id}")
+    public ResponseEntity<ElasticCommunity> GetCommunityById(@PathVariable Integer community_id) {
+        ElasticCommunity communityById = communityElasticService.findByCommunityId(community_id);
+
+        return new ResponseEntity<>(communityById, HttpStatus.OK);
     }
 
     @PostMapping(value = "/add")
@@ -118,10 +137,14 @@ public class CommunityController {
 //        Community savedCommunity = communityService.save(newCommunity);
           communityService.save(newCommunity);
 
-        AddCommunityElasticDTO addCommunityElasticDTO = new AddCommunityElasticDTO();
-        addCommunityElasticDTO.setName(addCommunityDTO.getName());
-        addCommunityElasticDTO.setName(addCommunityDTO.getDescription());
-          communityElasticService.save(addCommunityElasticDTO);
+        AddElasticCommunityDTO addElasticCommunityDTO = new AddElasticCommunityDTO();
+
+        addElasticCommunityDTO.setCommunity_id(newCommunity.getCommunity_id());
+        addElasticCommunityDTO.setName(addCommunityDTO.getName());
+        addElasticCommunityDTO.setDescription(addCommunityDTO.getDescription());
+        addElasticCommunityDTO.setIs_suspended(false);
+
+          communityElasticService.index(addElasticCommunityDTO);
 
         for (RuleDTO ruleDTO : addCommunityDTO.getRules()) {
             Rule newRule = new Rule();
@@ -151,14 +174,22 @@ public class CommunityController {
     @CrossOrigin
     public ResponseEntity<UpdateCommunityDTO> UpdateCommunity(@RequestBody UpdateCommunityDTO updateCommunityDTO, @PathVariable("community_id") Integer community_id) {
         Community community = communityService.findOne(community_id);
+        ElasticCommunity elasticCommunity = communityElasticService.findByCommunityId(community_id);
 
         if (community == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if (elasticCommunity == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         community.setDescription(updateCommunityDTO.getDescription());
 
         community = communityService.save(community);
+
+        elasticCommunity.setDescription(updateCommunityDTO.getDescription());
+
+        communityElasticService.update(elasticCommunity);
 
         return new ResponseEntity<>(modelMapper.map(community, UpdateCommunityDTO.class), HttpStatus.OK);
     }

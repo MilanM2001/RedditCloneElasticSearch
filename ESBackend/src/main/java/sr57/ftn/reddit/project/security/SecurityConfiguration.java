@@ -66,19 +66,23 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/posts/all").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/posts/single/{post_id}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/posts/comments/{post_id}").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/posts/addElastic/{name}").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/api/communities/all").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/single/{community_id}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/posts/{community_id}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/rules/{community_id}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/flairs/{community_id}").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/communities/findByName/{name}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/communities/findAllByDescription/{description}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/communities/findAllByName/{name}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/communities/findById/{community_id}").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/api/users/all").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/users/single/{user_id}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/users/getMe").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/users/register").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/users/login").permitAll()
+
 //                .antMatchers(HttpMethod.POST, "/api/users/loginAndroid").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/api/flairs/{flair_id}").permitAll()

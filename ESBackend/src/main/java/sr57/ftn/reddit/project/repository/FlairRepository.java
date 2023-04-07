@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 import sr57.ftn.reddit.project.model.entity.Flair;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface FlairRepository extends JpaRepository<Flair, Integer> {

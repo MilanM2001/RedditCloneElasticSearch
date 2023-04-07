@@ -1,7 +1,6 @@
 package sr57.ftn.reddit.project.controller;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,6 @@ import sr57.ftn.reddit.project.model.enums.ReportStatus;
 import sr57.ftn.reddit.project.service.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/comments")

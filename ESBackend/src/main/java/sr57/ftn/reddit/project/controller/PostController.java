@@ -8,12 +8,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import sr57.ftn.reddit.project.model.dto.commentDTOs.AddCommentDTO;
+import sr57.ftn.reddit.project.elasticservice.CommunityElasticService;
+import sr57.ftn.reddit.project.elasticservice.PostElasticService;
 import sr57.ftn.reddit.project.model.dto.commentDTOs.CommentDTO;
 import sr57.ftn.reddit.project.model.dto.postDTOs.AddPostDTO;
+import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.AddPostElasticDTO;
 import sr57.ftn.reddit.project.model.dto.postDTOs.PostDTO;
 import sr57.ftn.reddit.project.model.dto.postDTOs.UpdatePostDTO;
 import sr57.ftn.reddit.project.model.dto.reportDTOs.AddReportDTO;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticPost;
 import sr57.ftn.reddit.project.model.entity.*;
 import sr57.ftn.reddit.project.model.enums.ReactionType;
 import sr57.ftn.reddit.project.model.enums.ReportStatus;
@@ -33,9 +37,15 @@ public class PostController {
     final ReactionService reactionService;
     final ReportService reportService;
     final FlairService flairService;
+    final CommunityElasticService communityElasticService;
+    final PostElasticService postElasticService;
 
     @Autowired
-    public PostController(PostService postService, UserService userService, CommunityService communityService, ModelMapper modelMapper, CommentService commentService, ReactionService reactionService, ReportService reportService, FlairService flairService) {
+    public PostController(PostService postService, UserService userService,
+                          CommunityService communityService, ModelMapper modelMapper,
+                          CommentService commentService, ReactionService reactionService,
+                          ReportService reportService, FlairService flairService,
+                          CommunityElasticService communityElasticService, PostElasticService postElasticService) {
         this.postService = postService;
         this.userService = userService;
         this.communityService = communityService;
@@ -44,6 +54,8 @@ public class PostController {
         this.reactionService = reactionService;
         this.reportService = reportService;
         this.flairService = flairService;
+        this.communityElasticService = communityElasticService;
+        this.postElasticService = postElasticService;
     }
 
     @GetMapping(value = "/all")
@@ -87,6 +99,22 @@ public class PostController {
 //        }
 //        return karma;
 //    }
+
+    @PostMapping(value = "/addElastic/{name}")
+    @CrossOrigin
+    public ResponseEntity<ElasticPost> AddElasticPost(@RequestBody AddPostElasticDTO addPostDTO, @PathVariable("name") String name) {
+        ElasticCommunity community = communityElasticService.findOneByName(name);
+
+        ElasticPost newPost = new ElasticPost();
+
+        newPost.setPost_id(123);
+        newPost.setText(addPostDTO.getText());
+        newPost.setCommunity(community);
+
+        postElasticService.index(newPost);
+
+        return new ResponseEntity<>(newPost, HttpStatus.OK);
+    }
 
     @PostMapping(value = "/add/{community_id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")

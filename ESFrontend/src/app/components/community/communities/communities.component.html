@@ -1,3 +1,31 @@
 <h1 class="welcome">All Communities</h1>
+        <mat-card-title class="search-bar">Search By</mat-card-title>
+        <form [formGroup]="optionFormGroup">
+            <div class="radio-group">
+                <mat-radio-group formControlName="search_option"
+                    [ngClass]="{ 'is-invalid': submittedOption && optionGroup['search_option'].errors }">
+                    <mat-radio-button class="radio-button" value="1">Name</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="2">Description</mat-radio-button>
+                </mat-radio-group>
+                <div *ngIf="submittedOption && optionGroup['search_option'].errors" class="invalid-feedback">
+                    <div *ngIf="optionGroup['search_option'].errors['required']">Choose an option.</div>
+                </div>
+            </div>
+        </form>
+
+        <form [formGroup]="searchFormGroup">
+            <div class="mb-3 w-25">
+                <input type="text" class="form-control" formControlName="search_input"
+                    [ngClass]="{ 'is-invalid': submittedSearch && searchGroup['search_input'].errors }">
+                    <div *ngIf="submittedSearch && searchGroup['search_input'].errors" class="invalid-feedback">
+                        <div *ngIf="searchGroup['search_input'].errors['required']">Enter something.</div>
+                    </div>
+                <button mat-button class="search-button" (click)="search()">
+                    <mat-icon>search</mat-icon>
+                    Search
+                </button>
+            </div>
+        </form>
 <a routerLink="/Community-Add" *ngIf="isLoggedIn()"><button class="btn btn-success">Create a Community</button></a>
 <app-community-list [communities]="communities"></app-community-list>
+<h1 class="nothing_found" *ngIf="no_results">Found no Results</h1>

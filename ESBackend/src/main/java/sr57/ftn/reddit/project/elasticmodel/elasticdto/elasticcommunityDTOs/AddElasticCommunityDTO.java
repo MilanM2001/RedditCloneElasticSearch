@@ -1,4 +1,4 @@
-package sr57.ftn.reddit.project.model.dto.communityDTOs;
+package sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddCommunityElasticDTO {
+public class AddElasticCommunityDTO {
     private Integer community_id;
     private String name;
     private String description;
+    private Boolean is_suspended;
 }

@@ -17,9 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import sr57.ftn.reddit.project.model.dto.communityDTOs.CommunityDTO;
 import sr57.ftn.reddit.project.model.dto.postDTOs.PostDTO;
-import sr57.ftn.reddit.project.model.dto.reactionDTOs.ReactionDTO;
 import sr57.ftn.reddit.project.model.dto.userDTOs.*;
 import sr57.ftn.reddit.project.model.entity.Post;
 import sr57.ftn.reddit.project.model.entity.User;
@@ -28,12 +26,9 @@ import sr57.ftn.reddit.project.security.TokenUtils;
 import sr57.ftn.reddit.project.service.PostService;
 import sr57.ftn.reddit.project.service.UserService;
 
-import java.security.Principal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @RestController
 @RequestMapping(value = "api/users")

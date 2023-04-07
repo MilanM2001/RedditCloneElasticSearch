@@ -1,10 +1,13 @@
 package sr57.ftn.reddit.project.elasticrepository;
 
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
-import sr57.ftn.reddit.project.model.elasticmodel.CommunityElastic;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
 
 import java.util.List;
 
-public interface CommunityElasticRepository extends ElasticsearchRepository<CommunityElastic, Integer> {
-    List<CommunityElastic> findAllByName(String name);
+public interface CommunityElasticRepository extends ElasticsearchRepository<ElasticCommunity, Integer> {
+    List<ElasticCommunity> findAllByDescription(String description);
+    List<ElasticCommunity> findAllByName(String name);
+    ElasticCommunity findByName(String name);
+
 }

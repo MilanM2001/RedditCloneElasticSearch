@@ -11,6 +11,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import {MatIconModule} from '@angular/material/icon'
+import {MatRadioModule} from '@angular/material/radio';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -32,7 +33,6 @@ import { PostViewComponent } from './components/post/post-view/post-view.compone
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { RegisterComponent } from './components/register/register.component';
 import { AuthInterceptor } from './services/auth.interceptor';
-import { MatIcon } from '@angular/material';
 import { RuleEditComponent } from './components/rule/rule-edit/rule-edit.component';
 import { RuleAddComponent } from './components/rule/rule-add/rule-add.component';
 import { MyProfileComponent } from './components/user/my-profile/my-profile.component';
@@ -76,7 +76,8 @@ import { ViewProfileComponent } from './components/user/view-profile/view-profil
     MatFormFieldModule,
     MatSelectModule,
     MatIconModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatRadioModule
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,
