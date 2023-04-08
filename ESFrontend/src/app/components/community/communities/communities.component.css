@@ -20,6 +20,7 @@
     text-align: left;
     font-size: 17px;
     margin-left: 20px;
+    margin-bottom: 30px;
 }
 
 .search-bar {
@@ -28,16 +29,25 @@
     margin-bottom: 17px;
 }
 
+.search-button-div {
+    margin-left: 700px;
+}
+
 .search-button {
     font-size: 20px;
     margin-top: 15px;
-    margin-left: 130px;
+    margin-left: auto;
 }
 
 .mb-3 {
     margin-right: auto;
     margin-left: auto;
-    margin-top: 30px;
+    width: 100px;
+}
+
+.card-title {
+    font-size: 15px;
+    text-align: center;
 }
 
 .nothing_found {

@@ -5,6 +5,6 @@ import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticPost;
 
 import java.util.List;
 
-public interface PostElasticRepository extends ElasticsearchRepository<ElasticPost, Integer> {
+public interface ElasticPostRepository extends ElasticsearchRepository<ElasticPost, Integer> {
     List<ElasticPost> findAllByText(String text);
 }

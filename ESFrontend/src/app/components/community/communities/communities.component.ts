@@ -11,7 +11,9 @@ import { CommunityService } from 'src/app/services/community.service';
 export class CommunitiesComponent implements OnInit {
 
   searchFormGroup: FormGroup = new FormGroup({
-    search_input: new FormControl('')
+    search_input: new FormControl(''),
+    from: new FormControl(''),
+    to: new FormControl('')
   })
 
   optionFormGroup: FormGroup = new FormGroup({
@@ -28,7 +30,9 @@ export class CommunitiesComponent implements OnInit {
 
   ngOnInit(): void {
     this.searchFormGroup = this.formBuilder.group({
-      search_input: ['', [Validators.required]]
+      search_input: ['', [Validators.required]],
+      from: ['', [Validators.min(0), Validators.max(1000)]],
+      to: ['', [Validators.min(0), Validators.max(1000)]]
     })
 
     this.optionFormGroup = this.formBuilder.group({
@@ -58,21 +62,27 @@ export class CommunitiesComponent implements OnInit {
     this.submittedSearch = true;
     this.submittedOption = true;
 
-    if (this.searchFormGroup.invalid) {
-      return;
+    let search_option;
+    search_option = this.optionFormGroup.get('search_option')?.value;
+
+    if (search_option != 3) {
+      if (this.searchFormGroup.invalid) {
+        return;
+      }
     }
 
     if (this.optionFormGroup.invalid) {
       return;
     }
 
-    let search_option;
-    search_option = this.optionFormGroup.get('search_option')?.value;
-    console.log(search_option);
-
     let search_input;
     search_input = this.searchFormGroup.get('search_input')?.value;
 
+    let from;
+    from = this.searchFormGroup.get('from')?.value;
+
+    let to;
+    to = this.searchFormGroup.get('to')?.value;
 
     //Search by Name
     if (search_option == 1) {
@@ -105,11 +115,41 @@ export class CommunitiesComponent implements OnInit {
           }
         })
       }
+
+    //Search by Number of Posts
+    if (search_option == 3) {
+      this.communityService.GetAllByNumberOfPosts(from, to)
+        .subscribe({
+          next: (data: Community[]) => {
+            this.communities = data;
+            if (data.length == 0) {
+              this.no_results = true;
+            }
+            if (data.length > 0) {
+              this.no_results = false;
+            }
+          }
+        })
+    }
+
   }
 
 
 
-  public isLoggedIn(): boolean {
+  isSearchingText(): boolean {
+    let search_option;
+    search_option = this.optionFormGroup.get('search_option')?.value;
+
+    if (search_option == 3) {
+      return false;
+    } else if (search_option == 1 || search_option == 2){
+      return true;
+    }
+
+    return true;
+  }
+  
+  isLoggedIn(): boolean {
     if (localStorage.getItem("authToken") != null) {
       return true;
     }

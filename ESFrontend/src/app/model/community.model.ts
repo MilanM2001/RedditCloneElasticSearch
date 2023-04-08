@@ -11,8 +11,9 @@ export class Community {
     suspended_reason: string = "";
     rules: Rule[] = [];
     flairs: Flair[] = [];
+    numberOfPosts: number = 0;
 
-    Community(community_id: number, name: string, description: string, createdDate: Date, isSuspended: boolean, suspended_reason: string, rules: Rule[], flairs: Flair[]) {
+    Community(community_id: number, name: string, description: string, createdDate: Date, isSuspended: boolean, suspended_reason: string, rules: Rule[], flairs: Flair[], numberOfPosts: number) {
         this.community_id = community_id;
         this,name = name;
         this.description = description;
@@ -21,6 +22,7 @@ export class Community {
         this.suspended_reason = suspended_reason;
         this.rules = rules;
         this.flairs = flairs;
+        this.numberOfPosts = numberOfPosts;
     }
 
 }

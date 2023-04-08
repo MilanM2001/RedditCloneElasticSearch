@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs.AddElasticCommunityDTO;
-import sr57.ftn.reddit.project.elasticservice.CommunityElasticService;
+import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs.ElasticCommunityResponseDTO;
+import sr57.ftn.reddit.project.elasticservice.ElasticCommunityService;
 import sr57.ftn.reddit.project.model.dto.communityDTOs.*;
 import sr57.ftn.reddit.project.model.dto.flairDTOs.FlairDTO;
 import sr57.ftn.reddit.project.model.dto.postDTOs.PostDTO;
@@ -33,13 +33,13 @@ public class CommunityController {
     final FlairService flairService;
     final PostService postService;
     final ReactionService reactionService;
-    final CommunityElasticService communityElasticService;
+    final ElasticCommunityService elasticCommunityService;
 
     @Autowired
     public CommunityController(CommunityService communityService, ModelMapper modelMapper,
                                UserService userService, ModeratorService moderatorService,
                                RuleService ruleService, FlairService flairService, PostService postService,
-                               ReactionService reactionService, CommunityElasticService communityElasticService) {
+                               ReactionService reactionService, ElasticCommunityService elasticCommunityService) {
         this.communityService = communityService;
         this.modelMapper = modelMapper;
         this.userService = userService;
@@ -48,7 +48,7 @@ public class CommunityController {
         this.flairService = flairService;
         this.postService = postService;
         this.reactionService = reactionService;
-        this.communityElasticService = communityElasticService;
+        this.elasticCommunityService = elasticCommunityService;
     }
 
     @GetMapping("/all")
@@ -96,23 +96,21 @@ public class CommunityController {
 
     @GetMapping(value = "/findAllByDescription/{description}")
     public ResponseEntity<List<ElasticCommunity>> GetAllByDescription(@PathVariable String description) {
-        List<ElasticCommunity> communities = communityElasticService.findAllByDescription(description);
+        List<ElasticCommunity> communities = elasticCommunityService.findAllByDescription(description);
 
         return new ResponseEntity<>(communities, HttpStatus.OK);
     }
 
     @GetMapping(value = "/findAllByName/{name}")
     public ResponseEntity<List<ElasticCommunity>> GetAllByName(@PathVariable String name) {
-        List<ElasticCommunity> communities = communityElasticService.findAllByName(name);
+        List<ElasticCommunity> communities = elasticCommunityService.findAllByName(name);
 
         return new ResponseEntity<>(communities, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/findById/{community_id}")
-    public ResponseEntity<ElasticCommunity> GetCommunityById(@PathVariable Integer community_id) {
-        ElasticCommunity communityById = communityElasticService.findByCommunityId(community_id);
-
-        return new ResponseEntity<>(communityById, HttpStatus.OK);
+    @GetMapping("/numberOfPosts/{from}/to/{to}")
+    public List<ElasticCommunityResponseDTO> getByNumberOfPostsRange(@PathVariable Integer from, @PathVariable Integer to) {
+        return elasticCommunityService.findByNumberOfPosts(from, to);
     }
 
     @PostMapping(value = "/add")
@@ -133,18 +131,18 @@ public class CommunityController {
         newCommunity.setCreation_date(LocalDate.now());
         newCommunity.setIs_suspended(false);
         newCommunity.setSuspended_reason("Not Suspended");
+        newCommunity.setNumberOfPosts(0);
 
-//        Community savedCommunity = communityService.save(newCommunity);
           communityService.save(newCommunity);
 
-        AddElasticCommunityDTO addElasticCommunityDTO = new AddElasticCommunityDTO();
+        ElasticCommunity elasticCommunity = new ElasticCommunity();
 
-        addElasticCommunityDTO.setCommunity_id(newCommunity.getCommunity_id());
-        addElasticCommunityDTO.setName(addCommunityDTO.getName());
-        addElasticCommunityDTO.setDescription(addCommunityDTO.getDescription());
-        addElasticCommunityDTO.setIs_suspended(false);
+        elasticCommunity.setCommunity_id(newCommunity.getCommunity_id());
+        elasticCommunity.setName(addCommunityDTO.getName());
+        elasticCommunity.setDescription(addCommunityDTO.getDescription());
+        elasticCommunity.setNumberOfPosts(0);
 
-          communityElasticService.index(addElasticCommunityDTO);
+          elasticCommunityService.index(elasticCommunity);
 
         for (RuleDTO ruleDTO : addCommunityDTO.getRules()) {
             Rule newRule = new Rule();
@@ -174,7 +172,7 @@ public class CommunityController {
     @CrossOrigin
     public ResponseEntity<UpdateCommunityDTO> UpdateCommunity(@RequestBody UpdateCommunityDTO updateCommunityDTO, @PathVariable("community_id") Integer community_id) {
         Community community = communityService.findOne(community_id);
-        ElasticCommunity elasticCommunity = communityElasticService.findByCommunityId(community_id);
+        ElasticCommunity elasticCommunity = elasticCommunityService.findByCommunityId(community_id);
 
         if (community == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -189,7 +187,7 @@ public class CommunityController {
 
         elasticCommunity.setDescription(updateCommunityDTO.getDescription());
 
-        communityElasticService.update(elasticCommunity);
+        elasticCommunityService.update(elasticCommunity);
 
         return new ResponseEntity<>(modelMapper.map(community, UpdateCommunityDTO.class), HttpStatus.OK);
     }

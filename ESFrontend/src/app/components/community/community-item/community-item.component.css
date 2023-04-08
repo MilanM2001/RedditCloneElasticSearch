@@ -11,10 +11,16 @@
   color: blue;
   font-weight: 500;
   cursor: pointer;
+  margin-bottom: 16px;
 }
 
 .community-description {
   font-size: 20px;
+  text-align: left;
+}
+
+.community-number-of-posts {
+  font-size: 17px;
   text-align: left;
 }
 

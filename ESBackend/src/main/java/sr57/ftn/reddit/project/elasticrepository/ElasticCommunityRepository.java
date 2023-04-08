@@ -5,9 +5,7 @@ import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
 
 import java.util.List;
 
-public interface CommunityElasticRepository extends ElasticsearchRepository<ElasticCommunity, Integer> {
+public interface ElasticCommunityRepository extends ElasticsearchRepository<ElasticCommunity, Integer> {
     List<ElasticCommunity> findAllByDescription(String description);
     List<ElasticCommunity> findAllByName(String name);
-    ElasticCommunity findByName(String name);
-
 }

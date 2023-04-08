@@ -22,4 +22,5 @@ public class CommunityDTO implements Serializable {
     private Boolean is_suspended;
     private String suspended_reason;
     private Set<ModeratorDTO> moderators = new HashSet<>();
+    private Integer numberOfPosts;
 }

@@ -6,6 +6,7 @@
                     [ngClass]="{ 'is-invalid': submittedOption && optionGroup['search_option'].errors }">
                     <mat-radio-button class="radio-button" value="1">Name</mat-radio-button>
                     <mat-radio-button class="radio-button" value="2">Description</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="3">Number of Posts</mat-radio-button>
                 </mat-radio-group>
                 <div *ngIf="submittedOption && optionGroup['search_option'].errors" class="invalid-feedback">
                     <div *ngIf="optionGroup['search_option'].errors['required']">Choose an option.</div>
@@ -14,18 +15,43 @@
         </form>
 
         <form [formGroup]="searchFormGroup">
+
             <div class="mb-3 w-25">
-                <input type="text" class="form-control" formControlName="search_input"
+                <input *ngIf="isSearchingText()" type="text" class="form-control" formControlName="search_input"
                     [ngClass]="{ 'is-invalid': submittedSearch && searchGroup['search_input'].errors }">
                     <div *ngIf="submittedSearch && searchGroup['search_input'].errors" class="invalid-feedback">
                         <div *ngIf="searchGroup['search_input'].errors['required']">Enter something.</div>
                     </div>
-                <button mat-button class="search-button" (click)="search()">
-                    <mat-icon>search</mat-icon>
-                    Search
-                </button>
             </div>
+
+            <div class="mb-3" *ngIf="!isSearchingText()">
+                <mat-card-title class="card-title">From</mat-card-title>
+                <input type="number" class="form-control" formControlName="from"
+                    [ngClass]="{ 'is-invalid': submittedSearch && searchGroup['from'].errors }">
+                    <div *ngIf="submittedSearch && searchGroup['from'].errors" class="invalid-feedback">
+                        <div *ngIf="searchGroup['from'].errors['min']">Cannot be lower than 0.</div>
+                        <div *ngIf="searchGroup['from'].errors['max']">Cannot be higher than 1000.</div>
+                    </div>
+            </div>
+
+            <div class="mb-3" *ngIf="!isSearchingText()">
+                <mat-card-title class="card-title">To</mat-card-title>
+                <input type="number" class="form-control" formControlName="to"
+                    [ngClass]="{ 'is-invalid': submittedSearch && searchGroup['to'].errors }">
+                    <div *ngIf="submittedSearch && searchGroup['to'].errors" class="invalid-feedback">
+                        <div *ngIf="searchGroup['to'].errors['required']">Enter something.</div>
+                    </div>
+            </div>
+
         </form>
+
+        <div class="search-button-div">
+            <button mat-button class="search-button" (click)="search()">
+                <mat-icon>search</mat-icon>
+                Search
+            </button>
+        </div>
+
 <a routerLink="/Community-Add" *ngIf="isLoggedIn()"><button class="btn btn-success">Create a Community</button></a>
 <app-community-list [communities]="communities"></app-community-list>
 <h1 class="nothing_found" *ngIf="no_results">Found no Results</h1>

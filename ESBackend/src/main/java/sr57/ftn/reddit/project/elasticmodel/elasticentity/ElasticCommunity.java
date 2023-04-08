@@ -27,9 +27,6 @@ public class ElasticCommunity {
     @Field(type = FieldType.Text)
     private String description;
 
-    @Field(type = FieldType.Boolean)
-    private Boolean is_suspended;
-
-    @Field(type = FieldType.Nested)
-    private Set<Post> posts = new HashSet<>();
+    @Field(type = FieldType.Integer)
+    private Integer numberOfPosts;
 }

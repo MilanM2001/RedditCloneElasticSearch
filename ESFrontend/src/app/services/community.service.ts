@@ -40,6 +40,10 @@ export class CommunityService {
         return this.http.get<Community[]>(`${environment.baseApiUrl}/${this.url}/findAllByDescription/` + description);
     }
 
+    public GetAllByNumberOfPosts(from: String, to: String): Observable<Community[]> {
+        return this.http.get<Community[]>(`${environment.baseApiUrl}/${this.url}/numberOfPosts/` + from + `/to/` + to)
+    }
+
     public GetCommunityRules(community_id: number): Observable<Rule[]> {
         return this.http.get<Rule[]>(`${environment.baseApiUrl}/${this.url}/rules/` + community_id);
     }

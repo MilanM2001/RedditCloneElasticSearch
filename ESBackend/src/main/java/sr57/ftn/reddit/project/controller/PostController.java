@@ -8,11 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import sr57.ftn.reddit.project.elasticservice.CommunityElasticService;
-import sr57.ftn.reddit.project.elasticservice.PostElasticService;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticUser;
+import sr57.ftn.reddit.project.elasticservice.ElasticCommunityService;
+import sr57.ftn.reddit.project.elasticservice.ElasticPostService;
 import sr57.ftn.reddit.project.model.dto.commentDTOs.CommentDTO;
 import sr57.ftn.reddit.project.model.dto.postDTOs.AddPostDTO;
-import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.AddPostElasticDTO;
 import sr57.ftn.reddit.project.model.dto.postDTOs.PostDTO;
 import sr57.ftn.reddit.project.model.dto.postDTOs.UpdatePostDTO;
 import sr57.ftn.reddit.project.model.dto.reportDTOs.AddReportDTO;
@@ -37,15 +37,15 @@ public class PostController {
     final ReactionService reactionService;
     final ReportService reportService;
     final FlairService flairService;
-    final CommunityElasticService communityElasticService;
-    final PostElasticService postElasticService;
+    final ElasticCommunityService elasticCommunityService;
+    final ElasticPostService elasticPostService;
 
     @Autowired
     public PostController(PostService postService, UserService userService,
                           CommunityService communityService, ModelMapper modelMapper,
                           CommentService commentService, ReactionService reactionService,
                           ReportService reportService, FlairService flairService,
-                          CommunityElasticService communityElasticService, PostElasticService postElasticService) {
+                          ElasticCommunityService elasticCommunityService, ElasticPostService elasticPostService) {
         this.postService = postService;
         this.userService = userService;
         this.communityService = communityService;
@@ -54,30 +54,31 @@ public class PostController {
         this.reactionService = reactionService;
         this.reportService = reportService;
         this.flairService = flairService;
-        this.communityElasticService = communityElasticService;
-        this.postElasticService = postElasticService;
+        this.elasticCommunityService = elasticCommunityService;
+        this.elasticPostService = elasticPostService;
     }
 
     @GetMapping(value = "/all")
     public ResponseEntity<List<PostDTO>> GetAll() {
         List<Post> posts = postService.findAllFromNonSuspendedCommunity();
+        List<PostDTO> postsDTO = modelMapper.map(posts, new TypeToken<List<PostDTO>>() {}.getType());
 
-        List<PostDTO> postsDTO = modelMapper.map(posts, new TypeToken<List<PostDTO>>() {
-        }.getType());
         return new ResponseEntity<>(postsDTO, HttpStatus.OK);
     }
 
     @GetMapping(value = "/single/{post_id}")
     public ResponseEntity<PostDTO> GetSingle(@PathVariable("post_id") Integer post_id) {
         Post post = postService.findOne(post_id);
-        return post == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(modelMapper.map(post, PostDTO.class), HttpStatus.OK);
+        PostDTO postDTO = modelMapper.map(post, PostDTO.class);
+
+        return new ResponseEntity<>(postDTO, HttpStatus.OK);
     }
 
     @GetMapping(value = "/comments/{post_id}")
     public ResponseEntity<List<CommentDTO>> GetPostComments(@PathVariable("post_id") Integer post_id) {
         List<Comment> comments = commentService.findCommentsByPostId(post_id);
-
         List<CommentDTO> commentsDTO = modelMapper.map(comments, new TypeToken<List<CommentDTO>>() {}.getType());
+
         return new ResponseEntity<>(commentsDTO, HttpStatus.OK);
     }
 
@@ -100,28 +101,16 @@ public class PostController {
 //        return karma;
 //    }
 
-    @PostMapping(value = "/addElastic/{name}")
-    @CrossOrigin
-    public ResponseEntity<ElasticPost> AddElasticPost(@RequestBody AddPostElasticDTO addPostDTO, @PathVariable("name") String name) {
-        ElasticCommunity community = communityElasticService.findOneByName(name);
-
-        ElasticPost newPost = new ElasticPost();
-
-        newPost.setPost_id(123);
-        newPost.setText(addPostDTO.getText());
-        newPost.setCommunity(community);
-
-        postElasticService.index(newPost);
-
-        return new ResponseEntity<>(newPost, HttpStatus.OK);
-    }
-
     @PostMapping(value = "/add/{community_id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @CrossOrigin
     public ResponseEntity<AddPostDTO> AddPost(@RequestBody AddPostDTO addPostDTO, @PathVariable("community_id") Integer community_id, Authentication authentication) {
         User user = userService.findByUsername(authentication.getName());
+        ElasticUser elasticUser = new ElasticUser();
+        elasticUser.setUsername(user.getUsername());
+
         Community community = communityService.findOne(community_id);
+        ElasticCommunity elasticCommunity = elasticCommunityService.findByCommunityId(community_id);
 
         Post newPost = new Post();
 
@@ -137,6 +126,16 @@ public class PostController {
 
         newPost = postService.save(newPost);
 
+        ElasticPost elasticPost = new ElasticPost();
+
+        elasticPost.setPost_id(newPost.getPost_id());
+        elasticPost.setTitle(addPostDTO.getTitle());
+        elasticPost.setText(addPostDTO.getText());
+        elasticPost.setUser(elasticUser);
+        elasticPost.setCommunity(elasticCommunity);
+
+        elasticPostService.index(elasticPost);
+
         Reaction newReaction = new Reaction();
 
         newReaction.setUser(user);
@@ -146,6 +145,13 @@ public class PostController {
         newReaction.setPost(newPost);
 
         reactionService.save(newReaction);
+
+        Integer numberOfPosts = postService.countPostsByCommunityId(community_id);
+
+        community.setNumberOfPosts(numberOfPosts);
+        communityService.save(community);
+        elasticCommunity.setNumberOfPosts(numberOfPosts);
+        elasticCommunityService.index(elasticCommunity);
 
         return new ResponseEntity<>(modelMapper.map(newPost, AddPostDTO.class), HttpStatus.CREATED);
     }

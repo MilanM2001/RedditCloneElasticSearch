@@ -46,6 +46,10 @@ public class PostService {
         return postRepository.findPostsByCommunityId(community_id);
     }
 
+    public Integer countPostsByCommunityId(Integer community_id) {
+        return postRepository.countPostsByCommunityId(community_id);
+    }
+
     public List<Post> findPostsByUserId(Integer user_id) {
         return postRepository.findPostsByUserId(user_id);
     }
