@@ -36,9 +36,6 @@ public class Community implements Serializable {
     @Column(name = "suspended_reason", nullable = false)
     private String suspended_reason;
 
-    @Column(name = "numberOfPosts", nullable = false)
-    private Integer numberOfPosts;
-
     //Community has many Posts
     @OneToMany(mappedBy = "community", fetch = FetchType.EAGER)
     private Set<Post> posts = new HashSet<>();

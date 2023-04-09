@@ -39,16 +39,20 @@ public class ElasticCommunityService {
         elasticCommunityRepository.save(elasticCommunity);
     }
 
-    public List<ElasticCommunity> findAllByDescription(String description) {
-        return elasticCommunityRepository.findAllByDescription(description);
+    public List<ElasticCommunity> findAll() {
+        return elasticCommunityRepository.findAll();
+    }
+
+    public ElasticCommunity findByCommunityId(Integer community_id) {
+        return elasticCommunityRepository.findById(community_id).orElseGet(null);
     }
 
     public List<ElasticCommunity> findAllByName(String name) {
         return elasticCommunityRepository.findAllByName(name);
     }
 
-    public ElasticCommunity findByCommunityId(Integer community_id) {
-        return elasticCommunityRepository.findById(community_id).orElseGet(null);
+    public List<ElasticCommunity> findAllByDescription(String description) {
+        return elasticCommunityRepository.findAllByDescription(description);
     }
 
     public List<ElasticCommunityResponseDTO> findByNumberOfPosts(double from, double to) {

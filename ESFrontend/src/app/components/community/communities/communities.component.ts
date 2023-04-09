@@ -39,7 +39,7 @@ export class CommunitiesComponent implements OnInit {
       search_option: ['', [Validators.required]]
     })
 
-    this.communityService.GetAll()
+    this.communityService.GetAllElastic()
       .subscribe({
         next: (data: Community[]) => {
           this.communities = data;
@@ -133,8 +133,6 @@ export class CommunitiesComponent implements OnInit {
     }
 
   }
-
-
 
   isSearchingText(): boolean {
     let search_option;

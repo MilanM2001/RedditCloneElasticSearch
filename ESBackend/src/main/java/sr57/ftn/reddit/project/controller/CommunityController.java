@@ -52,7 +52,6 @@ public class CommunityController {
     }
 
     @GetMapping("/all")
-    @CrossOrigin
     public ResponseEntity<List<CommunityDTO>> GetAll() {
         List<Community> communities = communityService.findAllNonSuspended();
         List<CommunityDTO> communitiesDTO = modelMapper.map(communities, new TypeToken<List<CommunityDTO>>() {
@@ -61,13 +60,38 @@ public class CommunityController {
         return new ResponseEntity<>(communitiesDTO, HttpStatus.OK);
     }
 
+    @GetMapping("/allElastic")
+    public ResponseEntity<List<ElasticCommunity>> GetAllElastic() {
+        List<ElasticCommunity> elasticCommunities = elasticCommunityService.findAll();
+
+        return new ResponseEntity<>(elasticCommunities, HttpStatus.OK);
+    }
+
     @GetMapping("/single/{community_id}")
     public ResponseEntity<CommunityDTO> GetCommunity(@PathVariable("community_id") Integer community_id) {
         Community community = communityService.findOne(community_id);
         CommunityDTO communityDTO = modelMapper.map(community, CommunityDTO.class);
 
         return new ResponseEntity<>(communityDTO, HttpStatus.OK);
-//        return community == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(modelMapper.map(community, CommunityDTO.class), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/findAllByName/{name}")
+    public ResponseEntity<List<ElasticCommunity>> GetAllByName(@PathVariable String name) {
+        List<ElasticCommunity> elasticCommunities = elasticCommunityService.findAllByName(name);
+
+        return new ResponseEntity<>(elasticCommunities, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/findAllByDescription/{description}")
+    public ResponseEntity<List<ElasticCommunity>> GetAllByDescription(@PathVariable String description) {
+        List<ElasticCommunity> elasticCommunities = elasticCommunityService.findAllByDescription(description);
+
+        return new ResponseEntity<>(elasticCommunities, HttpStatus.OK);
+    }
+
+    @GetMapping("/numberOfPosts/{from}/to/{to}")
+    public List<ElasticCommunityResponseDTO> getByNumberOfPostsRange(@PathVariable Integer from, @PathVariable Integer to) {
+        return elasticCommunityService.findByNumberOfPosts(from, to);
     }
 
     @GetMapping(value = "/posts/{community_id}")
@@ -94,25 +118,6 @@ public class CommunityController {
         return new ResponseEntity<>(flairsDTO, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/findAllByDescription/{description}")
-    public ResponseEntity<List<ElasticCommunity>> GetAllByDescription(@PathVariable String description) {
-        List<ElasticCommunity> communities = elasticCommunityService.findAllByDescription(description);
-
-        return new ResponseEntity<>(communities, HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/findAllByName/{name}")
-    public ResponseEntity<List<ElasticCommunity>> GetAllByName(@PathVariable String name) {
-        List<ElasticCommunity> communities = elasticCommunityService.findAllByName(name);
-
-        return new ResponseEntity<>(communities, HttpStatus.OK);
-    }
-
-    @GetMapping("/numberOfPosts/{from}/to/{to}")
-    public List<ElasticCommunityResponseDTO> getByNumberOfPostsRange(@PathVariable Integer from, @PathVariable Integer to) {
-        return elasticCommunityService.findByNumberOfPosts(from, to);
-    }
-
     @PostMapping(value = "/add")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @CrossOrigin
@@ -131,7 +136,6 @@ public class CommunityController {
         newCommunity.setCreation_date(LocalDate.now());
         newCommunity.setIs_suspended(false);
         newCommunity.setSuspended_reason("Not Suspended");
-        newCommunity.setNumberOfPosts(0);
 
           communityService.save(newCommunity);
 

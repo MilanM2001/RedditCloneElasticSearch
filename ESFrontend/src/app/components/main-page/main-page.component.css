@@ -5,3 +5,46 @@
     margin-bottom: 60px;
     color: black;
 }
+
+.radio-group {
+    text-align: center;
+}
+
+.radio-button {
+    text-align: left;
+    font-size: 17px;
+    margin-left: 20px;
+    margin-bottom: 30px;
+}
+
+.search-bar {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 17px;
+}
+
+.search-button-div {
+    margin-left: 700px;
+}
+
+.search-button {
+    font-size: 20px;
+    margin-top: 15px;
+    margin-left: auto;
+}
+
+.mb-3 {
+    margin-right: auto;
+    margin-left: auto;
+    width: 100px;
+}
+
+.card-title {
+    font-size: 15px;
+    text-align: center;
+}
+
+.nothing_found {
+    margin-top: 50px;
+    margin-left: 670px;
+}

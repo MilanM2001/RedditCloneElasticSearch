@@ -20,16 +20,12 @@ export class CommunityService {
         return this.http.get<Community[]>(`${environment.baseApiUrl}/${this.url}/all`);
     }
 
+    public GetAllElastic(): Observable<Community[]> {
+        return this.http.get<Community[]>(`${environment.baseApiUrl}/${this.url}/allElastic`);
+    }
+
     public GetSingle(community_id: number): Observable<Community> {
         return this.http.get<Community>(`${environment.baseApiUrl}/${this.url}/single/` + community_id);
-    }
-
-    public GetCommunityPosts(community_id: number): Observable<Post[]> {
-        return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/posts/` + community_id);
-    }
-
-    public GetCommunityFlairs(community_id: number): Observable<Flair[]> {
-        return this.http.get<Flair[]>(`${environment.baseApiUrl}/${this.url}/flairs/` + community_id);
     }
 
     public GetAllByName(name: String): Observable<Community[]> {
@@ -42,6 +38,14 @@ export class CommunityService {
 
     public GetAllByNumberOfPosts(from: String, to: String): Observable<Community[]> {
         return this.http.get<Community[]>(`${environment.baseApiUrl}/${this.url}/numberOfPosts/` + from + `/to/` + to)
+    }
+
+    public GetCommunityPosts(community_id: number): Observable<Post[]> {
+        return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/posts/` + community_id);
+    }
+
+    public GetCommunityFlairs(community_id: number): Observable<Flair[]> {
+        return this.http.get<Flair[]>(`${environment.baseApiUrl}/${this.url}/flairs/` + community_id);
     }
 
     public GetCommunityRules(community_id: number): Observable<Rule[]> {

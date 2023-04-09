@@ -23,6 +23,9 @@ public class ElasticPost {
     @Field(type = FieldType.Text)
     private String text;
 
+    @Field(type = FieldType.Integer)
+    private Integer numberOfUpvotes;
+
     @Field(type = FieldType.Object)
     private ElasticUser user;
 

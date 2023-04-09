@@ -66,12 +66,33 @@ public class PostController {
         return new ResponseEntity<>(postsDTO, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/allElastic")
+    public ResponseEntity<List<ElasticPost>> GetAllElastic() {
+        List<ElasticPost> elasticPosts = elasticPostService.findAll();
+
+        return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
+    }
+
     @GetMapping(value = "/single/{post_id}")
     public ResponseEntity<PostDTO> GetSingle(@PathVariable("post_id") Integer post_id) {
         Post post = postService.findOne(post_id);
         PostDTO postDTO = modelMapper.map(post, PostDTO.class);
 
         return new ResponseEntity<>(postDTO, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/findAllByTitle/{title}")
+    public ResponseEntity<List<ElasticPost>> GetAllByTitle(@PathVariable String title) {
+        List<ElasticPost> elasticPosts = elasticPostService.findAllByTitle(title);
+
+        return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/findAllByText/{text}")
+    public ResponseEntity<List<ElasticPost>> GetAllByText(@PathVariable String text) {
+        List<ElasticPost> elasticPosts = elasticPostService.findAllByText(text);
+
+        return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
     }
 
     @GetMapping(value = "/comments/{post_id}")
@@ -126,16 +147,6 @@ public class PostController {
 
         newPost = postService.save(newPost);
 
-        ElasticPost elasticPost = new ElasticPost();
-
-        elasticPost.setPost_id(newPost.getPost_id());
-        elasticPost.setTitle(addPostDTO.getTitle());
-        elasticPost.setText(addPostDTO.getText());
-        elasticPost.setUser(elasticUser);
-        elasticPost.setCommunity(elasticCommunity);
-
-        elasticPostService.index(elasticPost);
-
         Reaction newReaction = new Reaction();
 
         newReaction.setUser(user);
@@ -146,10 +157,19 @@ public class PostController {
 
         reactionService.save(newReaction);
 
+        ElasticPost elasticPost = new ElasticPost();
+
+        elasticPost.setPost_id(newPost.getPost_id());
+        elasticPost.setTitle(addPostDTO.getTitle());
+        elasticPost.setText(addPostDTO.getText());
+        elasticPost.setNumberOfUpvotes(1);
+        elasticPost.setUser(elasticUser);
+        elasticPost.setCommunity(elasticCommunity);
+
+        elasticPostService.index(elasticPost);
+
         Integer numberOfPosts = postService.countPostsByCommunityId(community_id);
 
-        community.setNumberOfPosts(numberOfPosts);
-        communityService.save(community);
         elasticCommunity.setNumberOfPosts(numberOfPosts);
         elasticCommunityService.index(elasticCommunity);
 
@@ -184,6 +204,7 @@ public class PostController {
     public ResponseEntity<UpdatePostDTO> UpdatePost(@RequestBody UpdatePostDTO updatePostDTO, @PathVariable("post_id") Integer post_id, Authentication authentication) {
         User user = userService.findByUsername(authentication.getName());
         Post post = postService.findOne(post_id);
+        ElasticPost elasticPost = elasticPostService.findByPostId(post_id);
 
         if (post == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -196,7 +217,13 @@ public class PostController {
         post.setTitle(updatePostDTO.getTitle());
         post.setText(updatePostDTO.getText());
 
-        post = postService.save(post);
+        postService.save(post);
+
+        elasticPost.setTitle(updatePostDTO.getTitle());
+        elasticPost.setText(updatePostDTO.getText());
+
+        elasticPostService.update(elasticPost);
+
         return new ResponseEntity<>(modelMapper.map(post, UpdatePostDTO.class), HttpStatus.OK);
     }
 
@@ -206,6 +233,8 @@ public class PostController {
     public ResponseEntity<Void> DeletePost(@PathVariable("post_id") Integer post_id, Authentication authentication) {
         User user = userService.findByUsername(authentication.getName());
         Post post = postService.findOne(post_id);
+        Integer community_id = post.getCommunity().getCommunity_id();
+        ElasticCommunity elasticCommunity = elasticCommunityService.findByCommunityId(community_id);
 
         if (user.getUser_id() != post.getUser().getUser_id()) {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
@@ -216,6 +245,13 @@ public class PostController {
         commentService.deleteByPostId(post_id);
         reportService.deleteByPostId(post_id);
         postService.remove(post_id);
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        elasticPostService.remove(post_id);
+
+        Integer numberOfPosts = postService.countPostsByCommunityId(community_id);
+
+        elasticCommunity.setNumberOfPosts(numberOfPosts);
+        elasticCommunityService.index(elasticCommunity);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

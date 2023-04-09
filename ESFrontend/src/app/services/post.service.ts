@@ -16,8 +16,20 @@ export class PostService {
     return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/all`);
   }
 
+  public GetAllElastic(): Observable<Post[]> {
+    return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/allElastic`);
+  }
+
   public GetSingle(post_id: number): Observable<Post> {
     return this.http.get<Post>(`${environment.baseApiUrl}/${this.url}/single/` + post_id);
+  }
+
+  public GetAllByTitle(title: String): Observable<Post[]> {
+    return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/findAllByTitle/` + title);
+  }
+
+  public GetAllByText(text: String): Observable<Post[]> {
+    return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/findAllByText/` + text);
   }
 
   public AddPost(community_id: number, postDTO: AddPostDTO): Observable<Post> {
