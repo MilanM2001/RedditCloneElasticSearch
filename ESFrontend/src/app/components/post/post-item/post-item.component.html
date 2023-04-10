@@ -5,6 +5,7 @@
     <mat-card-subtitle *ngIf="post.flair != null" class="post-flair">{{post.flair.name}}</mat-card-subtitle>
     <mat-card-title class="post-user">{{post.user.username}}</mat-card-title>
     <mat-card-title class="post-title" [routerLink]="['/Post-View', post.post_id]">{{post.title}}</mat-card-title>
-    <!-- <img class="post-image" mat-card-image [routerLink]="['/post-view', post.post_id]"
-      src="https://material.angular.io/assets/img/examples/shiba2.jpg"> -->
+    <mat-card-content>
+      <p class="post-karma">Karma: {{post.karma}}</p>
+    </mat-card-content>
   </mat-card>

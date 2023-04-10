@@ -9,12 +9,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs.ElasticCommunityResponseDTO;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
 import sr57.ftn.reddit.project.elasticservice.ElasticCommunityService;
-import sr57.ftn.reddit.project.model.dto.communityDTOs.*;
+import sr57.ftn.reddit.project.model.dto.communityDTOs.AddCommunityDTO;
+import sr57.ftn.reddit.project.model.dto.communityDTOs.CommunityDTO;
+import sr57.ftn.reddit.project.model.dto.communityDTOs.SuspendCommunityDTO;
+import sr57.ftn.reddit.project.model.dto.communityDTOs.UpdateCommunityDTO;
 import sr57.ftn.reddit.project.model.dto.flairDTOs.FlairDTO;
 import sr57.ftn.reddit.project.model.dto.postDTOs.PostDTO;
 import sr57.ftn.reddit.project.model.dto.ruleDTOs.RuleDTO;
-import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
 import sr57.ftn.reddit.project.model.entity.*;
 import sr57.ftn.reddit.project.service.*;
 
@@ -136,17 +139,7 @@ public class CommunityController {
         newCommunity.setCreation_date(LocalDate.now());
         newCommunity.setIs_suspended(false);
         newCommunity.setSuspended_reason("Not Suspended");
-
-          communityService.save(newCommunity);
-
-        ElasticCommunity elasticCommunity = new ElasticCommunity();
-
-        elasticCommunity.setCommunity_id(newCommunity.getCommunity_id());
-        elasticCommunity.setName(addCommunityDTO.getName());
-        elasticCommunity.setDescription(addCommunityDTO.getDescription());
-        elasticCommunity.setNumberOfPosts(0);
-
-          elasticCommunityService.index(elasticCommunity);
+        communityService.save(newCommunity);
 
         for (RuleDTO ruleDTO : addCommunityDTO.getRules()) {
             Rule newRule = new Rule();
@@ -163,11 +156,19 @@ public class CommunityController {
             flairService.save(newFlair);
         }
 
+        ElasticCommunity elasticCommunity = new ElasticCommunity();
+
+        elasticCommunity.setCommunity_id(newCommunity.getCommunity_id());
+        elasticCommunity.setName(addCommunityDTO.getName());
+        elasticCommunity.setDescription(addCommunityDTO.getDescription());
+        elasticCommunity.setNumberOfPosts(0);
+        elasticCommunityService.index(elasticCommunity);
+
         Moderator newModerator = new Moderator();
         newModerator.setUser(user);
         newModerator.setCommunity(newCommunity);
-
         moderatorService.save(newModerator);
+
         return new ResponseEntity<>(modelMapper.map(newCommunity, AddCommunityDTO.class), HttpStatus.CREATED);
     }
 
@@ -186,12 +187,10 @@ public class CommunityController {
         }
 
         community.setDescription(updateCommunityDTO.getDescription());
-
-        community = communityService.save(community);
+        communityService.save(community);
 
         elasticCommunity.setDescription(updateCommunityDTO.getDescription());
-
-        elasticCommunityService.update(elasticCommunity);
+        elasticCommunityService.index(elasticCommunity);
 
         return new ResponseEntity<>(modelMapper.map(community, UpdateCommunityDTO.class), HttpStatus.OK);
     }
@@ -228,38 +227,6 @@ public class CommunityController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-    }
-
-
-    //Android
-
-    @PostMapping(value = "/addCommunityAndroid")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    @CrossOrigin
-    public ResponseEntity<AddCommunityDTOAndroid> AddCommunityAndroid(@RequestBody AddCommunityDTOAndroid addCommunityDTOAndroid, Authentication authentication) {
-        User user = userService.findByUsername(authentication.getName());
-        Optional<Community> name = communityService.findFirstByName(addCommunityDTOAndroid.getName());
-
-        if (name.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-        }
-
-        Community newCommunity = modelMapper.map(addCommunityDTOAndroid, Community.class);
-
-        newCommunity.setName(addCommunityDTOAndroid.getName());
-        newCommunity.setDescription(addCommunityDTOAndroid.getDescription());
-        newCommunity.setCreation_date(LocalDate.now());
-        newCommunity.setIs_suspended(false);
-        newCommunity.setSuspended_reason("Not Suspended");
-
-        communityService.save(newCommunity);
-
-        Moderator newModerator = new Moderator();
-        newModerator.setUser(user);
-        newModerator.setCommunity(newCommunity);
-
-        moderatorService.save(newModerator);
-        return new ResponseEntity<>(modelMapper.map(newCommunity, AddCommunityDTOAndroid.class), HttpStatus.CREATED);
     }
 
 }

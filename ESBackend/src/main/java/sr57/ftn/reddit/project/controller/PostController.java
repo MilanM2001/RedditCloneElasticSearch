@@ -8,6 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.ElasticPostResponseDTO;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticPost;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticUser;
 import sr57.ftn.reddit.project.elasticservice.ElasticCommunityService;
 import sr57.ftn.reddit.project.elasticservice.ElasticPostService;
@@ -16,8 +19,6 @@ import sr57.ftn.reddit.project.model.dto.postDTOs.AddPostDTO;
 import sr57.ftn.reddit.project.model.dto.postDTOs.PostDTO;
 import sr57.ftn.reddit.project.model.dto.postDTOs.UpdatePostDTO;
 import sr57.ftn.reddit.project.model.dto.reportDTOs.AddReportDTO;
-import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
-import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticPost;
 import sr57.ftn.reddit.project.model.entity.*;
 import sr57.ftn.reddit.project.model.enums.ReactionType;
 import sr57.ftn.reddit.project.model.enums.ReportStatus;
@@ -95,6 +96,11 @@ public class PostController {
         return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
     }
 
+    @GetMapping("/karma/{from}/to/{to}")
+    public List<ElasticPostResponseDTO> getByKarmaRange(@PathVariable Integer from, @PathVariable Integer to) {
+        return elasticPostService.findByKarma(from, to);
+    }
+
     @GetMapping(value = "/comments/{post_id}")
     public ResponseEntity<List<CommentDTO>> GetPostComments(@PathVariable("post_id") Integer post_id) {
         List<Comment> comments = commentService.findCommentsByPostId(post_id);
@@ -102,25 +108,6 @@ public class PostController {
 
         return new ResponseEntity<>(commentsDTO, HttpStatus.OK);
     }
-
-    //Not needed, can be solved on the Frontend
-
-//    @GetMapping(value = "/{post_id}/karma")
-//    public Integer calculateKarma(@PathVariable("post_id") Integer post_id) {
-//        Post post = postService.findOne(post_id);
-//        Set<Reaction> postReactions = post.getReactions();
-//
-//        Integer karma = 0;
-//
-//        for(Reaction reaction : postReactions) {
-//            if(reaction.getReaction_type().equals(ReactionType.UPVOTE)) {
-//                karma++;
-//            }else if (reaction.getReaction_type().equals(ReactionType.DOWNVOTE)) {
-//                karma--;
-//            }
-//        }
-//        return karma;
-//    }
 
     @PostMapping(value = "/add/{community_id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
@@ -144,7 +131,6 @@ public class PostController {
         if (addPostDTO.getFlair_id() != 0) {
             newPost.setFlair(flairService.findOne(addPostDTO.getFlair_id()));
         }
-
         newPost = postService.save(newPost);
 
         Reaction newReaction = new Reaction();
@@ -154,7 +140,6 @@ public class PostController {
         newReaction.setComment(null);
         newReaction.setReaction_type(ReactionType.UPVOTE);
         newReaction.setPost(newPost);
-
         reactionService.save(newReaction);
 
         ElasticPost elasticPost = new ElasticPost();
@@ -162,10 +147,9 @@ public class PostController {
         elasticPost.setPost_id(newPost.getPost_id());
         elasticPost.setTitle(addPostDTO.getTitle());
         elasticPost.setText(addPostDTO.getText());
-        elasticPost.setNumberOfUpvotes(1);
+        elasticPost.setKarma(1);
         elasticPost.setUser(elasticUser);
         elasticPost.setCommunity(elasticCommunity);
-
         elasticPostService.index(elasticPost);
 
         Integer numberOfPosts = postService.countPostsByCommunityId(community_id);
@@ -216,12 +200,10 @@ public class PostController {
 
         post.setTitle(updatePostDTO.getTitle());
         post.setText(updatePostDTO.getText());
-
         postService.save(post);
 
         elasticPost.setTitle(updatePostDTO.getTitle());
         elasticPost.setText(updatePostDTO.getText());
-
         elasticPostService.update(elasticPost);
 
         return new ResponseEntity<>(modelMapper.map(post, UpdatePostDTO.class), HttpStatus.OK);

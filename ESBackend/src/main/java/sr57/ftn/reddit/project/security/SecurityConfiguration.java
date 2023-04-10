@@ -68,6 +68,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/posts/single/{post_id}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/posts/findAllByTitle/{title}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/posts/findAllByText/{text}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/posts/karma/{from}/to/{to}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/posts/comments/{post_id}").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/api/communities/all").permitAll()
@@ -86,14 +87,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/users/register").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/users/login").permitAll()
 
-//                .antMatchers(HttpMethod.POST, "/api/users/loginAndroid").permitAll()
-
                 .antMatchers(HttpMethod.GET, "/api/flairs/{flair_id}").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/api/rules/{rule_id}").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/api/comments/all").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/comments/{comment_id}").permitAll()
+
+                .antMatchers(HttpMethod.GET, "/api/reactions/postKarma/{post_id}").permitAll()
+
                 .anyRequest().authenticated();
 
         httpSecurity.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);

@@ -10,8 +10,9 @@ export class Post {
     community: Community = new Community;
     user: User = new User;
     flair: Flair = new Flair;
+    karma: number = 0;
 
-    Post(post_id: number, title: string, text: string, createdDate: Date, community: Community, user: User,flair: Flair) {
+    Post(post_id: number, title: string, text: string, createdDate: Date, community: Community, user: User, flair: Flair, karma: number) {
         this.post_id = post_id;
         this.title = title;
         this.text = text;
@@ -19,5 +20,6 @@ export class Post {
         this.community = community;
         this.user = user;
         this.flair = flair;
+        this.karma = karma;
     }
 }

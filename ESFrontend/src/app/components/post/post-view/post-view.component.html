@@ -5,8 +5,16 @@
     <mat-card-subtitle *ngIf="post.flair != null" class="post-flair">{{post.flair.name}}</mat-card-subtitle>
     <mat-card-title class="post-user">{{post.user.username}}</mat-card-title>
     <mat-card-title class="post-title">{{post.title}}</mat-card-title>
-    <!-- <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg"> -->
     <mat-card-subtitle class="post-subtitle">{{post.text}}</mat-card-subtitle>
+    <mat-card-content>
+      <button *ngIf="isLoggedIn()" (click)="upvotePost()">
+        <span style='font-size:15px;'>&#8593;</span>
+      </button>
+      <h4>{{post_karma}}</h4>
+      <button *ngIf="isLoggedIn()" (click)="downvotePost()">
+        <span style='font-size:15px;'>&#8595;</span>
+      </button>
+    </mat-card-content>
 </mat-card>
 <button *ngIf="isLoggedIn()" class="btn btn-warning" [routerLink]="['/Post-Edit', post.post_id]">Update</button>
 <button *ngIf="isLoggedIn()" class="btn btn-danger" (click)="deletePost()">Delete</button>

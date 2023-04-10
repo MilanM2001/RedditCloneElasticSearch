@@ -5,10 +5,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-import sr57.ftn.reddit.project.model.entity.Post;
-
-import java.util.HashSet;
-import java.util.Set;
 
 
 @Setter

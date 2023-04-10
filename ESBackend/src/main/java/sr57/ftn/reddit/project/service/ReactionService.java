@@ -22,12 +22,20 @@ public class ReactionService {
         return reactionRepository.findAll();
     }
 
+    public Reaction findByPostAndUser(Integer post_id, Integer user_id) {
+        return reactionRepository.findByPostAndUser(post_id, user_id);
+    }
+
     public void remove(Integer id) {
         reactionRepository.deleteById(id);
     }
 
     public void deleteByPostId(Integer post_id) {
         reactionRepository.deleteByPostId(post_id);
+    }
+
+    public void deleteByPostAndUser(Integer post_id, Integer user_id) {
+        reactionRepository.deleteByPostAndUser(post_id, user_id);
     }
 
     public void deleteCommentReactionsByPostId(Integer post_Id) {
