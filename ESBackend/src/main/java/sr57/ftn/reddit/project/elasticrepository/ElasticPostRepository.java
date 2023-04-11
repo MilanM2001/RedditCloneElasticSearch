@@ -9,5 +9,6 @@ public interface ElasticPostRepository extends ElasticsearchRepository<ElasticPo
     List<ElasticPost> findAllByTitle(String title);
     List<ElasticPost> findAllByText(String text);
     List<ElasticPost> findAll();
-
+    List<ElasticPost> findAllByCommunity_Name(String name);
+    List<ElasticPost> findAllByFlair_Name(String name);
 }

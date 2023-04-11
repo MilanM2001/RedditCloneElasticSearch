@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.ElasticPostResponseDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticFlair;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticPost;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticUser;
 import sr57.ftn.reddit.project.elasticservice.ElasticCommunityService;
@@ -96,6 +97,13 @@ public class PostController {
         return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
     }
 
+    @GetMapping(value = "findAllByFlairName/{name}")
+    public ResponseEntity<List<ElasticPost>> GetAllByFlairName(@PathVariable String name) {
+        List<ElasticPost> elasticPosts = elasticPostService.findAllByFlairName(name);
+
+        return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
+    }
+
     @GetMapping("/karma/{from}/to/{to}")
     public List<ElasticPostResponseDTO> getByKarmaRange(@PathVariable Integer from, @PathVariable Integer to) {
         return elasticPostService.findByKarma(from, to);
@@ -150,6 +158,14 @@ public class PostController {
         elasticPost.setKarma(1);
         elasticPost.setUser(elasticUser);
         elasticPost.setCommunity(elasticCommunity);
+        if (addPostDTO.getFlair_id() != 0) {
+            Flair foundFlair = flairService.findOne(addPostDTO.getFlair_id());
+            ElasticFlair elasticFlair= new ElasticFlair();
+
+            elasticFlair.setFlair_id(foundFlair.getFlair_id());
+            elasticFlair.setName(foundFlair.getName());
+            elasticPost.setFlair(elasticFlair);
+        }
         elasticPostService.index(elasticPost);
 
         Integer numberOfPosts = postService.countPostsByCommunityId(community_id);

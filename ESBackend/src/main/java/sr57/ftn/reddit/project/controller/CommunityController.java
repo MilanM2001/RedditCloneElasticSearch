@@ -10,7 +10,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs.ElasticCommunityResponseDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticPost;
 import sr57.ftn.reddit.project.elasticservice.ElasticCommunityService;
+import sr57.ftn.reddit.project.elasticservice.ElasticPostService;
 import sr57.ftn.reddit.project.model.dto.communityDTOs.AddCommunityDTO;
 import sr57.ftn.reddit.project.model.dto.communityDTOs.CommunityDTO;
 import sr57.ftn.reddit.project.model.dto.communityDTOs.SuspendCommunityDTO;
@@ -37,12 +39,14 @@ public class CommunityController {
     final PostService postService;
     final ReactionService reactionService;
     final ElasticCommunityService elasticCommunityService;
+    final ElasticPostService elasticPostService;
 
     @Autowired
     public CommunityController(CommunityService communityService, ModelMapper modelMapper,
                                UserService userService, ModeratorService moderatorService,
                                RuleService ruleService, FlairService flairService, PostService postService,
-                               ReactionService reactionService, ElasticCommunityService elasticCommunityService) {
+                               ReactionService reactionService, ElasticCommunityService elasticCommunityService,
+                               ElasticPostService elasticPostService) {
         this.communityService = communityService;
         this.modelMapper = modelMapper;
         this.userService = userService;
@@ -52,6 +56,7 @@ public class CommunityController {
         this.postService = postService;
         this.reactionService = reactionService;
         this.elasticCommunityService = elasticCommunityService;
+        this.elasticPostService = elasticPostService;
     }
 
     @GetMapping("/all")
@@ -103,6 +108,13 @@ public class CommunityController {
         List<PostDTO> postsDTO = modelMapper.map(posts, new TypeToken<List<PostDTO>>() {}.getType());
 
         return new ResponseEntity<>(postsDTO, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/elasticPosts/{name}")
+    public ResponseEntity<List<ElasticPost>> GetAllByCommunityName(@PathVariable("name") String name) {
+        List<ElasticPost> elasticPosts = elasticPostService.findAllByCommunityName(name);
+
+        return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
     }
 
     @GetMapping(value = "/rules/{community_id}")

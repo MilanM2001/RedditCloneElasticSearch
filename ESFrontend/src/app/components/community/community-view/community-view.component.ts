@@ -5,6 +5,7 @@ import { Flair } from 'src/app/model/flair.model';
 import { Post } from 'src/app/model/post.model';
 import { Rule } from 'src/app/model/rule.model';
 import { CommunityService } from 'src/app/services/community.service';
+import { PostService } from 'src/app/services/post.service';
 
 @Component({
   selector: 'app-community-view',
@@ -21,6 +22,7 @@ export class CommunityViewComponent implements OnInit {
   community_id: number = Number(this.route.snapshot.paramMap.get('community_id'));
 
   constructor(private communityService: CommunityService,
+              private postService: PostService,
               private route: ActivatedRoute,
               private router: Router) { }
 
@@ -32,24 +34,24 @@ export class CommunityViewComponent implements OnInit {
         },
         error: (error) => {
           console.log(error);
-        }
-      });
-
-    this.communityService.GetCommunityPosts(this.community_id)
-      .subscribe({
-        next: (data: Post[]) => {
-          this.posts = data as Post[];
         },
-        error: (error) => {
-          console.log(error);
+        complete: () => {
+          this.communityService.GetCommunityElasticPostsByName(this.community.name)
+            .subscribe({
+              next: (data: Post[]) => {
+                this.posts = data;
+              },
+              error: (error) => {
+                console.log(error);
+              }
+            })
         }
       });
 
     this.communityService.GetCommunityRules(this.community_id)
       .subscribe({
         next: (data: Rule[]) => {
-          this.rules = data as Rule[];
-          console.log(this.rules);
+          this.rules = data;
         },
         error: (error) => {
           console.log(error);

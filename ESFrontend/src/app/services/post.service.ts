@@ -32,6 +32,14 @@ export class PostService {
     return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/findAllByText/` + text);
   }
 
+  public GetAllByKarma(from: String, to: String): Observable<Post[]> {
+    return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/karma/` + from + `/to/` + to);
+  }
+
+  public GetAllByFlairName(name: String): Observable<Post[]> {
+    return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/findAllByFlairName/` + name);
+  }
+
   public AddPost(community_id: number, postDTO: AddPostDTO): Observable<Post> {
     return this.http.post<Post>(`${environment.baseApiUrl}/${this.url}/add/` + community_id, postDTO);
   }

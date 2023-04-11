@@ -68,6 +68,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/posts/single/{post_id}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/posts/findAllByTitle/{title}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/posts/findAllByText/{text}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/posts/findAllByFlairName/{name}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/posts/karma/{from}/to/{to}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/posts/comments/{post_id}").permitAll()
 
@@ -78,6 +79,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/communities/findAllByDescription/{description}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/numberOfPosts/{from}/to/{to}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/posts/{community_id}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/posts/elasticPosts/{name}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/rules/{community_id}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/flairs/{community_id}").permitAll()
 

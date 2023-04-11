@@ -16,6 +16,8 @@ public class ElasticPostMapper {
                 .title(elasticPost.getTitle())
                 .text(elasticPost.getText())
                 .karma(elasticPost.getKarma())
+                .community(elasticPost.getCommunity())
+                .user(elasticPost.getUser())
                 .build();
     }
 

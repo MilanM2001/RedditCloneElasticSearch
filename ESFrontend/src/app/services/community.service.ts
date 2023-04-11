@@ -44,6 +44,10 @@ export class CommunityService {
         return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/posts/` + community_id);
     }
 
+    public GetCommunityElasticPostsByName(name: string): Observable<Post[]> {
+        return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/elasticPosts/` + name);
+    }
+
     public GetCommunityFlairs(community_id: number): Observable<Flair[]> {
         return this.http.get<Flair[]>(`${environment.baseApiUrl}/${this.url}/flairs/` + community_id);
     }

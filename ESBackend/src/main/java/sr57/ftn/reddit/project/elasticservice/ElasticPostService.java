@@ -47,6 +47,14 @@ public class ElasticPostService {
         return elasticPostRepository.findById(post_id).orElseGet(null);
     }
 
+    public List<ElasticPost> findAllByCommunityName(String name) {
+        return elasticPostRepository.findAllByCommunity_Name(name);
+    }
+
+    public List<ElasticPost> findAllByFlairName(String name) {
+        return elasticPostRepository.findAllByFlair_Name(name);
+    }
+
     public List<ElasticPost> findAllByTitle(String title) {
         return elasticPostRepository.findAllByTitle(title);
     }

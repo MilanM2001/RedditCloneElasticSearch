@@ -10,8 +10,11 @@ import { CommunityService } from 'src/app/services/community.service';
 })
 export class CommunitiesComponent implements OnInit {
 
-  searchFormGroup: FormGroup = new FormGroup({
-    search_input: new FormControl(''),
+  searchFormInputGroup: FormGroup = new FormGroup({
+    search_input: new FormControl('')
+  })
+
+  searchFormNumbersGroup: FormGroup = new FormGroup({
     from: new FormControl(''),
     to: new FormControl('')
   })
@@ -29,10 +32,13 @@ export class CommunitiesComponent implements OnInit {
               private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
-    this.searchFormGroup = this.formBuilder.group({
-      search_input: ['', [Validators.required]],
-      from: ['', [Validators.min(0), Validators.max(1000)]],
-      to: ['', [Validators.min(0), Validators.max(1000)]]
+    this.searchFormInputGroup = this.formBuilder.group({
+      search_input: ['', [Validators.required]]
+    })
+
+    this.searchFormNumbersGroup = this.formBuilder.group({
+      from: ['', [Validators.required, Validators.min(0), Validators.max(1000)]],
+      to: ['', [Validators.required, Validators.min(0), Validators.max(1000)]]
     })
 
     this.optionFormGroup = this.formBuilder.group({
@@ -50,8 +56,12 @@ export class CommunitiesComponent implements OnInit {
       });
   }
 
-  get searchGroup(): { [key: string]: AbstractControl} {
-    return this.searchFormGroup.controls;
+  get searchInputGroup(): { [key: string]: AbstractControl} {
+    return this.searchFormInputGroup.controls;
+  }
+
+  get searchNumbersGroup(): { [key: string]: AbstractControl } {
+    return this.searchFormNumbersGroup.controls;
   }
 
   get optionGroup(): { [key: string]: AbstractControl } {
@@ -66,7 +76,13 @@ export class CommunitiesComponent implements OnInit {
     search_option = this.optionFormGroup.get('search_option')?.value;
 
     if (search_option != 3) {
-      if (this.searchFormGroup.invalid) {
+      if (this.searchFormInputGroup.invalid) {
+        return;
+      }
+    }
+
+    if (search_option == 3) {
+      if (this.searchFormNumbersGroup.invalid) {
         return;
       }
     }
@@ -76,13 +92,13 @@ export class CommunitiesComponent implements OnInit {
     }
 
     let search_input;
-    search_input = this.searchFormGroup.get('search_input')?.value;
+    search_input = this.searchFormInputGroup.get('search_input')?.value;
 
     let from;
-    from = this.searchFormGroup.get('from')?.value;
+    from = this.searchFormNumbersGroup.get('from')?.value;
 
     let to;
-    to = this.searchFormGroup.get('to')?.value;
+    to = this.searchFormNumbersGroup.get('to')?.value;
 
     //Search by Name
     if (search_option == 1) {

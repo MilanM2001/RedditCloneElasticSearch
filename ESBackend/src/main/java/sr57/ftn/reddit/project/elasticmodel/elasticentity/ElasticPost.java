@@ -31,7 +31,6 @@ public class ElasticPost {
     @Field(type = FieldType.Object)
     private ElasticCommunity community;
 
-//    @Field(type = FieldType.Object)
-//    private ElasticFlair flair;
-
+    @Field(type = FieldType.Object)
+    private ElasticFlair flair;
 }
