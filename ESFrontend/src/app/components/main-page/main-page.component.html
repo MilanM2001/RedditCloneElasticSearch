@@ -29,7 +29,7 @@
 
         <form [formGroup]="searchFormNumbersGroup">
 
-            <div class="mb-3" *ngIf="!isSearchingText()">
+            <div class="mb-3" *ngIf="isSearchingNumbers()">
                 <mat-card-title class="card-title">From</mat-card-title>
                 <input type="number" class="form-control" formControlName="from"
                     [ngClass]="{ 'is-invalid': submittedSearch && searchNumbersGroup['from'].errors }">
@@ -39,7 +39,7 @@
                     </div>
             </div>
 
-            <div class="mb-3" *ngIf="!isSearchingText()">
+            <div class="mb-3" *ngIf="isSearchingNumbers()">
                 <mat-card-title class="card-title">To</mat-card-title>
                 <input type="number" class="form-control" formControlName="to"
                     [ngClass]="{ 'is-invalid': submittedSearch && searchNumbersGroup['to'].errors }">
@@ -47,6 +47,20 @@
                         <div *ngIf="searchNumbersGroup['to'].errors['min']">Cannot be lower than 0.</div>
                         <div *ngIf="searchNumbersGroup['to'].errors['max']">Cannot be higher than 1000.</div>
                     </div>
+            </div>
+
+        </form>
+
+        <form [formGroup]="searchFormFlairGroup">
+
+            <div class="mb-3 w-25" *ngIf="isSearchingFlair()">
+                <mat-select class="form-control" formControlName="flair" id="flair" 
+                    [ngClass]="{ 'is-invalid':submittedSearch && searchFlairGroup['flair'].errors}">
+                    <div *ngIf="submittedSearch && searchFlairGroup['flair'].errors" class="invalid-feedback"></div>
+                    <mat-option *ngFor="let flair of flairs" [value]="flair.name">
+                        {{flair.name}}
+                    </mat-option>
+                </mat-select>
             </div>
 
         </form>

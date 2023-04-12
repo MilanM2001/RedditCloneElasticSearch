@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators, AbstractControl } from '@angular/forms';
+import { Flair } from 'src/app/model/flair.model';
 import { Post } from 'src/app/model/post.model';
+import { FlairService } from 'src/app/services/flair.service';
 import { PostService } from 'src/app/services/post.service';
 
 @Component({
@@ -19,17 +21,23 @@ export class MainPageComponent implements OnInit {
     to: new FormControl('')
   })
 
+  searchFormFlairGroup: FormGroup = new FormGroup({
+    flair: new FormControl('')
+  })
+
   optionFormGroup: FormGroup = new FormGroup({
     search_option: new FormControl('')
   })
 
   posts: Array<Post> = [];
+  flairs: Array<Flair> = [];
   submittedSearch = false;
   submittedOption = false;
   no_results = false;
 
   constructor(private postService: PostService,
-    private formBuilder: FormBuilder) { }
+              private flairService: FlairService,
+              private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
     this.searchFormInputGroup = this.formBuilder.group({
@@ -41,6 +49,10 @@ export class MainPageComponent implements OnInit {
       to: ['', [Validators.required, Validators.min(0), Validators.max(1000)]]
     })
 
+    this.searchFormFlairGroup = this.formBuilder.group({
+      flair: ['', [Validators.required]]
+    })
+
     this.optionFormGroup = this.formBuilder.group({
       search_option: ['', [Validators.required]]
     })
@@ -50,7 +62,17 @@ export class MainPageComponent implements OnInit {
         next: (data: Post[]) => {
           this.posts = data;
         },
-        error: (error: Error) => {
+        error: (error) => {
+          console.log(error);
+        }
+      })
+
+    this.flairService.GetAll()
+      .subscribe({
+        next: (data: Flair[]) => {
+          this.flairs = data;
+        },
+        error: (error) => {
           console.log(error);
         }
       })
@@ -64,6 +86,10 @@ export class MainPageComponent implements OnInit {
     return this.searchFormNumbersGroup.controls;
   }
 
+  get searchFlairGroup(): { [key: string]: AbstractControl } {
+    return this.searchFormFlairGroup.controls;
+  }
+
   get optionGroup(): { [key: string]: AbstractControl } {
     return this.optionFormGroup.controls;
   }
@@ -75,7 +101,7 @@ export class MainPageComponent implements OnInit {
     let search_option;
     search_option = this.optionFormGroup.get('search_option')?.value;
 
-    if (search_option != 3) {
+    if (search_option == 1 || search_option == 2) {
       if (this.searchFormInputGroup.invalid) {
         return;
       }
@@ -83,6 +109,12 @@ export class MainPageComponent implements OnInit {
 
     if (search_option == 3) {
       if (this.searchFormNumbersGroup.invalid) {
+        return;
+      }
+    }
+
+    if (search_option == 4) {
+      if (this.searchFormFlairGroup.invalid) {
         return;
       }
     }
@@ -99,6 +131,9 @@ export class MainPageComponent implements OnInit {
 
     let to;
     to = this.searchFormNumbersGroup.get('to')?.value;
+
+    let flair;
+    flair = this.searchFormFlairGroup.get('flair')?.value;
 
     //Search by Title
     if (search_option == 1) {
@@ -148,35 +183,52 @@ export class MainPageComponent implements OnInit {
         })
     }
 
-        //Search by Flair
-        if (search_option == 4) {
-          this.postService.GetAllByFlairName(search_input)
-            .subscribe({
-              next: (data: Post[]) => {
-                this.posts = data;
-                if (data.length == 0) {
-                  this.no_results = true;
-                }
-                if (data.length > 0) {
-                  this.no_results = false;
-                }
-              }
-            })
-        }
+    //Search by Flair
+    if (search_option == 4) {
+      this.postService.GetAllByFlairName(flair)
+        .subscribe({
+          next: (data: Post[]) => {
+            this.posts = data;
+            if (data.length == 0) {
+              this.no_results = true;
+            }
+            if (data.length > 0) {
+              this.no_results = false;
+            }
+          }
+        })
+    }
 
   }
 
   isSearchingText(): boolean {
-    let search_option;
-    search_option = this.optionFormGroup.get('search_option')?.value;
+    let search_option = this.optionFormGroup.get('search_option')?.value;
+
+    if (search_option == 1 || search_option == 2 || search_option == '') {
+      return true;
+    } else {
+      return false
+    }
+  }
+
+  isSearchingNumbers(): boolean {
+    let search_option = this.optionFormGroup.get('search_option')?.value;
 
     if (search_option == 3) {
-      return false;
-    } else if (search_option == 1 || search_option == 2) {
       return true;
+    } else {
+      return false;
     }
+  }
 
-    return true;
+  isSearchingFlair(): boolean {
+    let search_option = this.optionFormGroup.get('search_option')?.value;
+
+    if (search_option == 4) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
 }

@@ -1,6 +1,7 @@
 package sr57.ftn.reddit.project.controller;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,8 @@ import sr57.ftn.reddit.project.model.dto.flairDTOs.FlairDTO;
 import sr57.ftn.reddit.project.model.entity.Flair;
 import sr57.ftn.reddit.project.repository.FlairRepository;
 import sr57.ftn.reddit.project.service.FlairService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/flairs")
@@ -25,6 +28,14 @@ public class FlairController {
         this.flairService = flairService;
         this.modelMapper = modelMapper;
         this.flairRepository = flairRepository;
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<FlairDTO>> GetAll() {
+        List<Flair> flairs = flairService.findAll();
+        List<FlairDTO> flairsDTO = modelMapper.map(flairs, new TypeToken<List<FlairDTO>>() {}.getType());
+
+        return new ResponseEntity<>(flairsDTO, HttpStatus.OK);
     }
 
     @GetMapping("/single/{flair_id}")

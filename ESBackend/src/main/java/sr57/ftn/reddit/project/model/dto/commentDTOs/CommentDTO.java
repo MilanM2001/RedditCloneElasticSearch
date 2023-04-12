@@ -20,6 +20,4 @@ public class CommentDTO implements Serializable {
     private Integer comment_id;
     private String text;
     private SimpleInfoUserDTO user;
-    private Set<ReactionForCommentAndPost> reactions = new HashSet<>();
-    private Set<ReportDTO> reports = new HashSet<>();
 }

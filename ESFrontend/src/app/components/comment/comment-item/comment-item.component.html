@@ -1,0 +1,5 @@
+<mat-card class="comment-card">
+    <mat-card-title class="comment-user">{{comment.user.username}}:</mat-card-title>
+    <mat-card-title class="comment-text">"{{comment.text}}"</mat-card-title>
+</mat-card>
+<button *ngIf="isLoggedIn()" class="btn btn-danger" (click)="deletePost()">Delete</button>

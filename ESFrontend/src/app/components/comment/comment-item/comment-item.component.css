@@ -1,0 +1,22 @@
+.comment-card {
+    max-width: 600px;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.comment-user {
+    margin-bottom: 20px;
+    text-align: left;
+    font-size: 22px;
+    color: blue;
+}
+
+.comment-text {
+    margin-left: 20px;
+}
+
+.btn-danger {
+    margin-top: 10px;
+    margin-left: 460px;
+}

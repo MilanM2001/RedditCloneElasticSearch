@@ -18,6 +18,7 @@ public class ElasticPostMapper {
                 .karma(elasticPost.getKarma())
                 .community(elasticPost.getCommunity())
                 .user(elasticPost.getUser())
+                .flair(elasticPost.getFlair())
                 .build();
     }
 

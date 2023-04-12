@@ -15,6 +15,13 @@ import { PostService } from 'src/app/services/post.service';
 })
 export class PostAddComponent implements OnInit {
 
+  constructor(private communityService: CommunityService,
+              private postService: PostService,
+              private route: ActivatedRoute,
+              private router: Router,
+              private formBuilder: FormBuilder) 
+  { }
+
   formGroup: FormGroup = new FormGroup({
     title: new FormControl(''),
     text: new FormControl(''),
@@ -24,12 +31,6 @@ export class PostAddComponent implements OnInit {
   community: Community = new Community();
   community_id = Number(this.route.snapshot.paramMap.get('community_id'))
   flairs: Flair[] =  [];
-
-  constructor(private communityService: CommunityService,
-              private postService: PostService,
-              private route: ActivatedRoute,
-              private router: Router,
-              private formBuilder: FormBuilder) { }
   
   submitted = false;
   

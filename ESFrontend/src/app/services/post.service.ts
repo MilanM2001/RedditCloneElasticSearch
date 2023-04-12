@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AddPostDTO } from '../dto/addPostDTO';
 import { Post } from '../model/post.model';
+import { Comment } from '../model/comment.model';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +39,10 @@ export class PostService {
 
   public GetAllByFlairName(name: String): Observable<Post[]> {
     return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/findAllByFlairName/` + name);
+  }
+
+  public GetPostComments(post_id: number): Observable<Comment[]> {
+    return this.http.get<Comment[]>(`${environment.baseApiUrl}/${this.url}/comments/` + post_id);
   }
 
   public AddPost(community_id: number, postDTO: AddPostDTO): Observable<Post> {

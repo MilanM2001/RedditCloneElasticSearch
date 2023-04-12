@@ -57,3 +57,31 @@
   text-align: left;
   color: red;
 }
+
+.vote-button {
+  font-size: 13px;
+}
+
+.post-karma {
+  margin-top: 10px;
+  margin-left: 8.5px;
+  font-size: 18px;
+}
+
+.add-comment-card {
+  max-width: 530px;
+  margin-top: 30px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn-primary {
+  float: right;
+}
+
+.h1-comments {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-size: 35px;
+  text-align: center;
+}

@@ -36,6 +36,9 @@ import { RuleEditComponent } from './components/rule/rule-edit/rule-edit.compone
 import { RuleAddComponent } from './components/rule/rule-add/rule-add.component';
 import { MyProfileComponent } from './components/user/my-profile/my-profile.component';
 import { ViewProfileComponent } from './components/user/view-profile/view-profile.component';
+import { CommentEditComponent } from './components/comment/comment-edit/comment-edit.component';
+import { CommentItemComponent } from './components/comment/comment-item/comment-item.component';
+import { CommentListComponent } from './components/comment/comment-list/comment-list.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +63,10 @@ import { ViewProfileComponent } from './components/user/view-profile/view-profil
     RuleEditComponent,
     RuleAddComponent,
     MyProfileComponent,
-    ViewProfileComponent
+    ViewProfileComponent,
+    CommentEditComponent,
+    CommentItemComponent,
+    CommentListComponent
   ],
   imports: [
     BrowserModule,

@@ -6,15 +6,40 @@
     <mat-card-title class="post-user">{{post.user.username}}</mat-card-title>
     <mat-card-title class="post-title">{{post.title}}</mat-card-title>
     <mat-card-subtitle class="post-subtitle">{{post.text}}</mat-card-subtitle>
-    <mat-card-content>
-      <button *ngIf="isLoggedIn()" (click)="upvotePost()">
-        <span style='font-size:15px;'>&#8593;</span>
+      <button class="vote-button" *ngIf="isLoggedIn()" (click)="upvotePost()">
+        <span>&#8593;</span>
       </button>
-      <h4>{{post_karma}}</h4>
-      <button *ngIf="isLoggedIn()" (click)="downvotePost()">
-        <span style='font-size:15px;'>&#8595;</span>
+      <h4 class="post-karma">{{post_karma}}</h4>
+      <button class="vote-button" *ngIf="isLoggedIn()" (click)="downvotePost()">
+        <span>&#8595;</span>
       </button>
-    </mat-card-content>
 </mat-card>
 <button *ngIf="isLoggedIn()" class="btn btn-warning" [routerLink]="['/Post-Edit', post.post_id]">Update</button>
 <button *ngIf="isLoggedIn()" class="btn btn-danger" (click)="deletePost()">Delete</button>
+
+<mat-card class="add-comment-card" *ngIf="isLoggedIn()">
+  <mat-card-title class="comment-title">Comment</mat-card-title>
+      <form [formGroup]="commentFormGroup">
+
+          <div class="mb-3">
+              <textarea type="text" class="form-control" formControlName="text" maxlength="201"
+                  placeholder="Comment something here."
+                  [ngClass]="{ 'is-invalid': submittedComment && commentGroup['text'].errors }">
+              </textarea>
+              <div *ngIf="submittedComment && commentGroup['text'].errors" class="invalid-feedback">
+                  <div *ngIf="commentGroup['text'].errors['required']">Text is required.</div>
+                  <div *ngIf="commentGroup['text'].errors['minlength']">Text must be at least 5 characters long.</div>
+                  <div *ngIf="commentGroup['text'].errors['maxlength']">Text must not exceed 200 characters.</div>
+              </div>
+          </div>
+
+          <div class="form-group form-check">
+            <button class="btn btn-primary" (click)="addComment()">Post Comment</button>
+          </div>
+
+      </form>
+</mat-card>
+
+<h1 class="h1-comments">Comments</h1>
+
+<app-comment-list [comments]="comments"></app-comment-list>

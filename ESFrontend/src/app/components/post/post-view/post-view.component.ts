@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AddCommentDTO } from 'src/app/dto/addCommentDTO';
 import { CreateReactionDTO } from 'src/app/dto/createReactionDTO';
+import { Comment } from 'src/app/model/comment.model';
 import { Post } from 'src/app/model/post.model';
 import { Reaction } from 'src/app/model/reaction.model';
 import { ReactionType } from 'src/app/model/reactionType.enum';
+import { CommentService } from 'src/app/services/comment.service';
 import { PostService } from 'src/app/services/post.service';
 import { ReactionService } from 'src/app/services/reaction.service';
 
@@ -14,17 +18,25 @@ import { ReactionService } from 'src/app/services/reaction.service';
 })
 export class PostViewComponent implements OnInit {
 
-  post: Post = new Post();
-
   constructor(
   private postService: PostService,
   private reactionService: ReactionService,
   private route: ActivatedRoute,
-  private router: Router) { }
+  private router: Router,
+  private formBuilder: FormBuilder,
+  private commentService: CommentService) 
+  { }
 
+  commentFormGroup: FormGroup = new FormGroup({
+    text: new FormControl('')
+  });
+
+  post: Post = new Post();
+  comments: Comment[] = [];
   post_id = Number(this.route.snapshot.paramMap.get('post_id'))
   community_id: Number = 0;
   post_karma: number = 0;
+  submittedComment: boolean = false;
 
   ngOnInit(): void {
     this.postService.GetSingle(this.post_id)
@@ -47,6 +59,24 @@ export class PostViewComponent implements OnInit {
           console.log(error);
         }
     })
+
+    this.postService.GetPostComments(this.post_id)
+      .subscribe({
+        next: (data) => {
+          this.comments = data;
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      })
+
+    this.commentFormGroup = this.formBuilder.group({
+        text: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]]
+    })
+  }
+
+  get commentGroup(): { [key: string]: AbstractControl } {
+    return this.commentFormGroup.controls;
   }
 
   upvotePost() {
@@ -99,8 +129,6 @@ export class PostViewComponent implements OnInit {
       })
   }
 
-  
-
   deletePost() {
     if(window.confirm("Are you sure you want to delete this post?")) {
       this.postService.Delete(this.post_id)
@@ -113,6 +141,39 @@ export class PostViewComponent implements OnInit {
           }
         });
     };
+  }
+
+  addComment() {
+    this.submittedComment = true;
+
+    if (this.commentFormGroup.invalid) {
+      return;
+    }
+
+    let addComment: AddCommentDTO = new AddCommentDTO();
+
+    addComment.text = this.commentFormGroup.get('text')?.value;
+
+    this.commentService.AddComment(this.post_id, addComment)
+      .subscribe({
+        next: (data) => {
+          this.commentFormGroup.controls['text'].reset();
+        },
+        error: (error) => {
+          console.log(error);
+        },
+        complete: () => {
+          this.postService.GetPostComments(this.post_id)
+            .subscribe({
+              next: (data) => {
+                this.comments = data;
+              },
+              error: (error) => {
+                console.log(error);
+              }
+            })
+        }
+      })
   }
 
   public isLoggedIn(): boolean {

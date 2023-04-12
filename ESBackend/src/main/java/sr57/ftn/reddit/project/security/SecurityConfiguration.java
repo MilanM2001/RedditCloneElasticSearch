@@ -89,6 +89,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/users/register").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/users/login").permitAll()
 
+                .antMatchers(HttpMethod.GET, "/api/flairs/all").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/flairs/{flair_id}").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/api/rules/{rule_id}").permitAll()
