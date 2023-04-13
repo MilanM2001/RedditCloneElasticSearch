@@ -73,6 +73,12 @@ public class ElasticPostService {
         return ElasticPostMapper.mapDtos(searchBoolQuery(numberOfPostsQuery));
     }
 
+    public List<ElasticPostResponseDTO> findByNumberOfComments(double from, double to) {
+        String range = from + "-" + to;
+        QueryBuilder numberOfPostsQuery = SearchQueryGenerator.createRangeQueryBuilder(new SimpleQueryEs("numberOfComments", range));
+        return ElasticPostMapper.mapDtos(searchBoolQuery(numberOfPostsQuery));
+    }
+
     private SearchHits<ElasticPost> searchBoolQuery(QueryBuilder boolQueryBuilder) {
 
         NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()

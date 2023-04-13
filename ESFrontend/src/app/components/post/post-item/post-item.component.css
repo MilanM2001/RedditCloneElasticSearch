@@ -41,6 +41,11 @@
   text-align: left;
 }
 
+.post-numberOfComments {
+  font-size: 17px;
+  text-align: left;
+}
+
 .post-flair {
   font-size: 15px;
   text-align: left;

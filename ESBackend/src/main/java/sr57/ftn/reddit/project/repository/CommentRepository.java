@@ -19,4 +19,7 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     @Query(nativeQuery = true, value = "Select * From comment Where comment.post_id = ?")
     List<Comment> findCommentsByPostId(Integer post_id);
 
+    @Query(nativeQuery = true, value = "Select COUNT(comment_id) From comment Where post_id = ?")
+    Integer countCommentsByPostId(Integer post_id);
+
 }

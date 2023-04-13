@@ -25,6 +25,9 @@ public class ElasticPost {
     @Field(type = FieldType.Integer)
     private Integer karma;
 
+    @Field(type = FieldType.Integer)
+    private Integer numberOfComments;
+
     @Field(type = FieldType.Object)
     private ElasticUser user;
 

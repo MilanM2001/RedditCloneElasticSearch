@@ -13,6 +13,7 @@ public class ElasticPostResponseDTO {
     private String title;
     private String text;
     private Integer karma;
+    private Integer numberOfComments;
     private ElasticCommunity community;
     private ElasticUser user;
     private ElasticFlair flair;

@@ -105,8 +105,17 @@ public class PostController {
     }
 
     @GetMapping("/karma/{from}/to/{to}")
-    public List<ElasticPostResponseDTO> getByKarmaRange(@PathVariable Integer from, @PathVariable Integer to) {
-        return elasticPostService.findByKarma(from, to);
+    public ResponseEntity<List<ElasticPostResponseDTO>> GetByKarmaRange(@PathVariable Integer from, @PathVariable Integer to) {
+        List<ElasticPostResponseDTO> elasticPosts = elasticPostService.findByKarma(from, to);
+
+        return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
+    }
+
+    @GetMapping("/numberOfComments/{from}/to/{to}")
+    public ResponseEntity<List<ElasticPostResponseDTO>> GetByNumberOfCommentsRange(@PathVariable Integer from, @PathVariable Integer to) {
+        List<ElasticPostResponseDTO> elasticPosts = elasticPostService.findByNumberOfComments(from, to);
+
+        return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
     }
 
     @GetMapping(value = "/comments/{post_id}")
@@ -156,6 +165,7 @@ public class PostController {
         elasticPost.setTitle(addPostDTO.getTitle());
         elasticPost.setText(addPostDTO.getText());
         elasticPost.setKarma(1);
+        elasticPost.setNumberOfComments(0);
         elasticPost.setUser(elasticUser);
         elasticPost.setCommunity(elasticCommunity);
         if (addPostDTO.getFlair_id() != 0) {

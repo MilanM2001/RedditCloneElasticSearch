@@ -98,8 +98,10 @@ public class CommunityController {
     }
 
     @GetMapping("/numberOfPosts/{from}/to/{to}")
-    public List<ElasticCommunityResponseDTO> getByNumberOfPostsRange(@PathVariable Integer from, @PathVariable Integer to) {
-        return elasticCommunityService.findByNumberOfPosts(from, to);
+    public ResponseEntity<List<ElasticCommunityResponseDTO>> GetByNumberOfPostsRange(@PathVariable Integer from, @PathVariable Integer to) {
+        List<ElasticCommunityResponseDTO> elasticCommunities = elasticCommunityService.findByNumberOfPosts(from, to);
+
+        return new ResponseEntity<>(elasticCommunities, HttpStatus.OK);
     }
 
     @GetMapping(value = "/posts/{community_id}")

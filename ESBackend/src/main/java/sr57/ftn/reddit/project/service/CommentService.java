@@ -30,6 +30,10 @@ public class CommentService {
         commentRepository.deleteById(id);
     }
 
+    public Integer countCommentsByPostId(Integer post_id) {
+        return commentRepository.countCommentsByPostId(post_id);
+    }
+
     public void deleteByPostId(Integer post_id) {
         commentRepository.deleteByPostId(post_id);
     }

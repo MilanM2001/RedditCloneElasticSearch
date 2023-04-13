@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticPost;
+import sr57.ftn.reddit.project.elasticservice.ElasticPostService;
 import sr57.ftn.reddit.project.model.dto.commentDTOs.AddCommentDTO;
 import sr57.ftn.reddit.project.model.dto.commentDTOs.CommentDTO;
 import sr57.ftn.reddit.project.model.dto.commentDTOs.UpdateCommentDTO;
@@ -27,15 +29,20 @@ public class CommentController {
     final ReactionService reactionService;
     final ReportService reportService;
     final PostService postService;
+    final ElasticPostService elasticPostService;
 
     @Autowired
-    public CommentController(CommentService commentService, ModelMapper modelMapper, UserService userService, ReactionService reactionService, ReportService reportService, PostService postService) {
+    public CommentController(CommentService commentService, ModelMapper modelMapper,
+                             UserService userService, ReactionService reactionService,
+                             ReportService reportService, PostService postService,
+                             ElasticPostService elasticPostService) {
         this.commentService = commentService;
         this.modelMapper = modelMapper;
         this.userService = userService;
         this.reactionService = reactionService;
         this.reportService = reportService;
         this.postService = postService;
+        this.elasticPostService = elasticPostService;
     }
 
     @GetMapping(value = "/single/{comment_id}")
@@ -50,6 +57,7 @@ public class CommentController {
     public ResponseEntity<AddCommentDTO> AddComment(@RequestBody AddCommentDTO addCommentDTO, @PathVariable("post_id") Integer post_id, Authentication authentication) {
         User user = userService.findByUsername(authentication.getName());
         Post post = postService.findOne(post_id);
+        ElasticPost elasticPost = elasticPostService.findByPostId(post_id);
 
         Comment newComment = new Comment();
 
@@ -68,6 +76,11 @@ public class CommentController {
         newReaction.setComment(newComment);
         newReaction.setReaction_type(ReactionType.UPVOTE);
         newReaction.setPost(null);
+
+        Integer numberOfComments = commentService.countCommentsByPostId(post_id);
+
+        elasticPost.setNumberOfComments(numberOfComments);
+        elasticPostService.update(elasticPost);
 
         reactionService.save(newReaction);
         return new ResponseEntity<>(modelMapper.map(newComment, AddCommentDTO.class), HttpStatus.ACCEPTED);
@@ -130,6 +143,13 @@ public class CommentController {
         reactionService.deleteByCommentId(comment_id);
         reportService.deleteByCommentId(comment_id);
         commentService.remove(comment_id);
+
+        ElasticPost elasticPost = elasticPostService.findByPostId(comment.getPost().getPost_id());
+        Integer numberOfComments = commentService.countCommentsByPostId(comment.getPost().getPost_id());
+
+        elasticPost.setNumberOfComments(numberOfComments);
+        elasticPostService.update(elasticPost);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

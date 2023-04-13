@@ -7,5 +7,6 @@
     <mat-card-title class="post-title" [routerLink]="['/Post-View', post.post_id]">{{post.title}}</mat-card-title>
     <mat-card-content>
       <p class="post-karma">Karma: {{post.karma}}</p>
+      <p class="post-numberOfComments">Comments: {{post.numberOfComments}}</p>
     </mat-card-content>
   </mat-card>
