@@ -8,6 +8,7 @@
                     <mat-radio-button class="radio-button" value="2">Text</mat-radio-button>
                     <mat-radio-button class="radio-button" value="3">Karma</mat-radio-button>
                     <mat-radio-button class="radio-button" value="4">Flair</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="5">Comment number</mat-radio-button>
                 </mat-radio-group>
                 <div *ngIf="submittedOption && optionGroup['search_option'].errors" class="invalid-feedback">
                     <div *ngIf="optionGroup['search_option'].errors['required']">Choose an option.</div>
@@ -73,3 +74,4 @@
         </div>
         
 <app-post-list [posts]="posts"></app-post-list>
+<h1 class="nothing_found" *ngIf="no_results">Found no Results</h1>

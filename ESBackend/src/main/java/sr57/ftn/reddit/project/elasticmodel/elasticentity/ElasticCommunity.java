@@ -25,4 +25,7 @@ public class ElasticCommunity {
 
     @Field(type = FieldType.Integer)
     private Integer numberOfPosts;
+
+    @Field(type = FieldType.Double)
+    private Double averageKarma;
 }

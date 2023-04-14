@@ -61,6 +61,12 @@ public class ElasticCommunityService {
         return ElasticCommunityMapper.mapDtos(searchBoolQuery(numberOfPostsQuery));
     }
 
+    public List<ElasticCommunityResponseDTO> findByAverageKarma(double from, double to) {
+        String range = from + "-" + to;
+        QueryBuilder numberOfPostsQuery = SearchQueryGenerator.createRangeQueryBuilder(new SimpleQueryEs("averageKarma", range));
+        return ElasticCommunityMapper.mapDtos(searchBoolQuery(numberOfPostsQuery));
+    }
+
     private SearchHits<ElasticCommunity> searchBoolQuery(QueryBuilder boolQueryBuilder) {
 
         NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()

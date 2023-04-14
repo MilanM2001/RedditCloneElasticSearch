@@ -179,8 +179,16 @@ public class PostController {
         elasticPostService.index(elasticPost);
 
         Integer numberOfPosts = postService.countPostsByCommunityId(community_id);
+        List<ElasticPost> elasticPosts = elasticPostService.findAllByCommunityName(elasticCommunity.getName());
+        double totalKarma = 0.0;
+        for (ElasticPost eachElasticPost: elasticPosts) {
+            totalKarma += eachElasticPost.getKarma();
+        }
+
+        Double averageKarmaOfPost = totalKarma/numberOfPosts;
 
         elasticCommunity.setNumberOfPosts(numberOfPosts);
+        elasticCommunity.setAverageKarma(averageKarmaOfPost);
         elasticCommunityService.index(elasticCommunity);
 
         return new ResponseEntity<>(modelMapper.map(newPost, AddPostDTO.class), HttpStatus.CREATED);

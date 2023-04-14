@@ -41,6 +41,10 @@ export class PostService {
     return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/findAllByFlairName/` + name);
   }
 
+  public GetAllByNumberOfComments(from: String, to: String): Observable<Post[]> {
+    return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/numberOfComments/` + from + `/to/` + to);
+  }
+
   public GetPostComments(post_id: number): Observable<Comment[]> {
     return this.http.get<Comment[]>(`${environment.baseApiUrl}/${this.url}/comments/` + post_id);
   }

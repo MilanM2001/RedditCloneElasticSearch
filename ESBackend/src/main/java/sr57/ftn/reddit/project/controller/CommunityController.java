@@ -104,6 +104,13 @@ public class CommunityController {
         return new ResponseEntity<>(elasticCommunities, HttpStatus.OK);
     }
 
+    @GetMapping("/averageKarma/{from}/to/{to}")
+    public ResponseEntity<List<ElasticCommunityResponseDTO>> GetByAverageKarmaRange(@PathVariable Double from, @PathVariable Double to) {
+        List<ElasticCommunityResponseDTO> elasticCommunities = elasticCommunityService.findByAverageKarma(from, to);
+
+        return new ResponseEntity<>(elasticCommunities, HttpStatus.OK);
+    }
+
     @GetMapping(value = "/posts/{community_id}")
     public ResponseEntity<List<PostDTO>> GetCommunityPosts(@PathVariable Integer community_id) {
         List<Post> posts = postService.findPostsByCommunityId(community_id);
@@ -176,6 +183,7 @@ public class CommunityController {
         elasticCommunity.setName(addCommunityDTO.getName());
         elasticCommunity.setDescription(addCommunityDTO.getDescription());
         elasticCommunity.setNumberOfPosts(0);
+        elasticCommunity.setAverageKarma(0.0);
         elasticCommunityService.index(elasticCommunity);
 
         Moderator newModerator = new Moderator();

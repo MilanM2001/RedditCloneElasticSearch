@@ -36,8 +36,8 @@ export class MainPageComponent implements OnInit {
   no_results = false;
 
   constructor(private postService: PostService,
-              private flairService: FlairService,
-              private formBuilder: FormBuilder) { }
+    private flairService: FlairService,
+    private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
     this.searchFormInputGroup = this.formBuilder.group({
@@ -78,7 +78,7 @@ export class MainPageComponent implements OnInit {
       })
   }
 
-  get searchInputGroup(): { [key: string]: AbstractControl} {
+  get searchInputGroup(): { [key: string]: AbstractControl } {
     return this.searchFormInputGroup.controls;
   }
 
@@ -107,7 +107,7 @@ export class MainPageComponent implements OnInit {
       }
     }
 
-    if (search_option == 3) {
+    if (search_option == 3 || search_option == 5) {
       if (this.searchFormNumbersGroup.invalid) {
         return;
       }
@@ -147,6 +147,9 @@ export class MainPageComponent implements OnInit {
             if (data.length > 0) {
               this.no_results = false;
             }
+          },
+          error: (error) => {
+            console.log(error);
           }
         })
     }
@@ -163,9 +166,12 @@ export class MainPageComponent implements OnInit {
             if (data.length > 0) {
               this.no_results = false;
             }
+          },
+          error: (error) => {
+            console.log(error);
           }
         })
-      }
+    }
 
     //Search by Number of Posts
     if (search_option == 3) {
@@ -179,6 +185,9 @@ export class MainPageComponent implements OnInit {
             if (data.length > 0) {
               this.no_results = false;
             }
+          },
+          error: (error) => {
+            console.log(error);
           }
         })
     }
@@ -195,6 +204,28 @@ export class MainPageComponent implements OnInit {
             if (data.length > 0) {
               this.no_results = false;
             }
+          },
+          error: (error) => {
+            console.log(error);
+          }
+        })
+    }
+
+    //Search by Number of Comments
+    if (search_option == 5) {
+      this.postService.GetAllByNumberOfComments(from, to)
+        .subscribe({
+          next: (data: Post[]) => {
+            this.posts = data;
+            if (data.length == 0) {
+              this.no_results = true;
+            }
+            if (data.length > 0) {
+              this.no_results = false;
+            }
+          },
+          error: (error) => {
+            console.log(error);
           }
         })
     }
@@ -214,7 +245,7 @@ export class MainPageComponent implements OnInit {
   isSearchingNumbers(): boolean {
     let search_option = this.optionFormGroup.get('search_option')?.value;
 
-    if (search_option == 3) {
+    if (search_option == 3 || search_option == 5) {
       return true;
     } else {
       return false;
