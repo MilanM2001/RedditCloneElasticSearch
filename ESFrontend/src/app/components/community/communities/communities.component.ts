@@ -75,13 +75,13 @@ export class CommunitiesComponent implements OnInit {
     let search_option;
     search_option = this.optionFormGroup.get('search_option')?.value;
 
-    if (search_option != 3) {
+    if (search_option == 1 || search_option == 2) {
       if (this.searchFormInputGroup.invalid) {
         return;
       }
     }
 
-    if (search_option == 3) {
+    if (search_option == 3 || search_option == 4) {
       if (this.searchFormNumbersGroup.invalid) {
         return;
       }
@@ -112,6 +112,9 @@ export class CommunitiesComponent implements OnInit {
             if (data.length > 0) {
               this.no_results = false;
             }
+          },
+          error: (error) => {
+            console.log(error);
           }
         })
     }
@@ -128,6 +131,9 @@ export class CommunitiesComponent implements OnInit {
             if (data.length > 0) {
               this.no_results = false;
             }
+          },
+          error: (error) => {
+            console.log(error);
           }
         })
       }
@@ -144,6 +150,27 @@ export class CommunitiesComponent implements OnInit {
             if (data.length > 0) {
               this.no_results = false;
             }
+          },
+          error: (error) => {
+            console.log(error);
+          }
+        })
+    }
+
+    if (search_option == 4) {
+      this.communityService.GetAllByAverageKarma(from, to)
+        .subscribe({
+          next: (data: Community[]) => {
+            this.communities = data;
+            if (data.length == 0) {
+              this.no_results = true;
+            }
+            if (data.length > 0) {
+              this.no_results = false;
+            }
+          },
+          error: (error) => {
+            console.log(error);
           }
         })
     }
@@ -151,16 +178,23 @@ export class CommunitiesComponent implements OnInit {
   }
 
   isSearchingText(): boolean {
-    let search_option;
-    search_option = this.optionFormGroup.get('search_option')?.value;
+    let search_option = this.optionFormGroup.get('search_option')?.value;
 
-    if (search_option == 3) {
-      return false;
-    } else if (search_option == 1 || search_option == 2){
+    if (search_option == 1 || search_option == 2 || search_option == '') {
       return true;
+    } else {
+      return false
     }
+  }
 
-    return true;
+  isSearchingNumbers(): boolean {
+    let search_option = this.optionFormGroup.get('search_option')?.value;
+
+    if (search_option == 3 || search_option == 4) {
+      return true;
+    } else {
+      return false;
+    }
   }
   
   isLoggedIn(): boolean {

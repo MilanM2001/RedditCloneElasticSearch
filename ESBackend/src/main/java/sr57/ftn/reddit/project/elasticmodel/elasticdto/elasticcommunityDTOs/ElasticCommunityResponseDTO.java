@@ -10,4 +10,5 @@ public class ElasticCommunityResponseDTO {
     private String name;
     private String description;
     private Integer numberOfPosts;
+    private Double averageKarma;
 }

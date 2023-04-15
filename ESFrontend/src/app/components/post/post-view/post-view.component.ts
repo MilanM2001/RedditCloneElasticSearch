@@ -5,8 +5,10 @@ import { AddCommentDTO } from 'src/app/dto/addCommentDTO';
 import { CreateReactionDTO } from 'src/app/dto/createReactionDTO';
 import { Comment } from 'src/app/model/comment.model';
 import { Post } from 'src/app/model/post.model';
+import { UserService } from 'src/app/services/user.service';
 import { Reaction } from 'src/app/model/reaction.model';
 import { ReactionType } from 'src/app/model/reactionType.enum';
+import { User } from 'src/app/model/user.model';
 import { CommentService } from 'src/app/services/comment.service';
 import { PostService } from 'src/app/services/post.service';
 import { ReactionService } from 'src/app/services/reaction.service';
@@ -24,7 +26,8 @@ export class PostViewComponent implements OnInit {
   private route: ActivatedRoute,
   private router: Router,
   private formBuilder: FormBuilder,
-  private commentService: CommentService) 
+  private commentService: CommentService,
+  private userService: UserService) 
   { }
 
   commentFormGroup: FormGroup = new FormGroup({
@@ -32,6 +35,7 @@ export class PostViewComponent implements OnInit {
   });
 
   post: Post = new Post();
+  loggedInUser: User = new User();
   comments: Comment[] = [];
   post_id = Number(this.route.snapshot.paramMap.get('post_id'))
   community_id: Number = 0;
@@ -64,6 +68,16 @@ export class PostViewComponent implements OnInit {
       .subscribe({
         next: (data) => {
           this.comments = data;
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      })
+
+    this.userService.GetMe()
+      .subscribe({
+        next: (data) => {
+          this.loggedInUser = data;
         },
         error: (error) => {
           console.log(error);
@@ -176,7 +190,7 @@ export class PostViewComponent implements OnInit {
       })
   }
 
-  public isLoggedIn(): boolean {
+  isLoggedIn(): boolean {
     if (localStorage.getItem("authToken") != null) {
       return true;
     }
@@ -191,6 +205,15 @@ export class PostViewComponent implements OnInit {
     }
     else {
       return false
+    }
+  }
+
+  isByUser(): boolean {
+    if (this.post.user.username == this.loggedInUser.username) {
+      return true;
+    }
+    else {
+      return false;
     }
   }
 

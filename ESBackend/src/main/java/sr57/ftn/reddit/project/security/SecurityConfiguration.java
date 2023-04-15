@@ -79,6 +79,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/communities/findAllByName/{name}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/findAllByDescription/{description}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/numberOfPosts/{from}/to/{to}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/communities/averageKarma/{from}/to/{to}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/posts/{community_id}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/posts/elasticPosts/{name}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/rules/{community_id}").permitAll()

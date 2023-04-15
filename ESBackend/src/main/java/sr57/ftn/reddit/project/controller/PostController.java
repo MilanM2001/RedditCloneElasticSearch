@@ -27,6 +27,7 @@ import sr57.ftn.reddit.project.service.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("api/posts")
@@ -138,7 +139,6 @@ public class PostController {
         ElasticCommunity elasticCommunity = elasticCommunityService.findByCommunityId(community_id);
 
         Post newPost = new Post();
-
         newPost.setTitle(addPostDTO.getTitle());
         newPost.setText(addPostDTO.getText());
         newPost.setCreation_date(LocalDate.now());
@@ -151,7 +151,6 @@ public class PostController {
         newPost = postService.save(newPost);
 
         Reaction newReaction = new Reaction();
-
         newReaction.setUser(user);
         newReaction.setTimestamp(LocalDate.now());
         newReaction.setComment(null);
@@ -160,7 +159,6 @@ public class PostController {
         reactionService.save(newReaction);
 
         ElasticPost elasticPost = new ElasticPost();
-
         elasticPost.setPost_id(newPost.getPost_id());
         elasticPost.setTitle(addPostDTO.getTitle());
         elasticPost.setText(addPostDTO.getText());
@@ -185,10 +183,10 @@ public class PostController {
             totalKarma += eachElasticPost.getKarma();
         }
 
-        Double averageKarmaOfPost = totalKarma/numberOfPosts;
+        Double averageKarmaOfCommunity = totalKarma/numberOfPosts;
 
         elasticCommunity.setNumberOfPosts(numberOfPosts);
-        elasticCommunity.setAverageKarma(averageKarmaOfPost);
+        elasticCommunity.setAverageKarma(averageKarmaOfCommunity);
         elasticCommunityService.index(elasticCommunity);
 
         return new ResponseEntity<>(modelMapper.map(newPost, AddPostDTO.class), HttpStatus.CREATED);
@@ -228,7 +226,7 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        if (user.getUser_id() != post.getUser().getUser_id()) {
+        if (!Objects.equals(user.getUser_id(), post.getUser().getUser_id())) {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
 
@@ -252,7 +250,7 @@ public class PostController {
         Integer community_id = post.getCommunity().getCommunity_id();
         ElasticCommunity elasticCommunity = elasticCommunityService.findByCommunityId(community_id);
 
-        if (user.getUser_id() != post.getUser().getUser_id()) {
+        if (!Objects.equals(user.getUser_id(), post.getUser().getUser_id())) {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
 
@@ -264,8 +262,16 @@ public class PostController {
         elasticPostService.remove(post_id);
 
         Integer numberOfPosts = postService.countPostsByCommunityId(community_id);
+        List<ElasticPost> elasticPosts = elasticPostService.findAllByCommunityName(elasticCommunity.getName());
+        double totalKarma = 0.0;
+        for (ElasticPost eachElasticPost: elasticPosts) {
+            totalKarma += eachElasticPost.getKarma();
+        }
+
+        Double averageKarmaOfCommunity = totalKarma/numberOfPosts;
 
         elasticCommunity.setNumberOfPosts(numberOfPosts);
+        elasticCommunity.setAverageKarma(averageKarmaOfCommunity);
         elasticCommunityService.index(elasticCommunity);
 
         return new ResponseEntity<>(HttpStatus.OK);

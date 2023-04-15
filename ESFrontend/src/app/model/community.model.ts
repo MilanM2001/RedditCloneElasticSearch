@@ -12,8 +12,9 @@ export class Community {
     rules: Rule[] = [];
     flairs: Flair[] = [];
     numberOfPosts: number = 0;
+    averageKarma: number = 0;
 
-    Community(community_id: number, name: string, description: string, createdDate: Date, isSuspended: boolean, suspended_reason: string, rules: Rule[], flairs: Flair[], numberOfPosts: number) {
+    Community(community_id: number, name: string, description: string, createdDate: Date, isSuspended: boolean, suspended_reason: string, rules: Rule[], flairs: Flair[], numberOfPosts: number, averageKarma: number) {
         this.community_id = community_id;
         this,name = name;
         this.description = description;
@@ -23,6 +24,7 @@ export class Community {
         this.rules = rules;
         this.flairs = flairs;
         this.numberOfPosts = numberOfPosts;
+        this.averageKarma = averageKarma;
     }
 
 }

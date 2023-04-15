@@ -7,6 +7,7 @@
                     <mat-radio-button class="radio-button" value="1">Name</mat-radio-button>
                     <mat-radio-button class="radio-button" value="2">Description</mat-radio-button>
                     <mat-radio-button class="radio-button" value="3">Number of Posts</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="4">Average Karma</mat-radio-button>
                 </mat-radio-group>
                 <div *ngIf="submittedOption && optionGroup['search_option'].errors" class="invalid-feedback">
                     <div *ngIf="optionGroup['search_option'].errors['required']">Choose an option.</div>
@@ -28,7 +29,7 @@
 
         <form [formGroup]="searchFormNumbersGroup">
 
-            <div class="mb-3" *ngIf="!isSearchingText()">
+            <div class="mb-3" *ngIf="isSearchingNumbers()">
                 <mat-card-title class="card-title">From</mat-card-title>
                 <input type="number" class="form-control" formControlName="from"
                     [ngClass]="{ 'is-invalid': submittedSearch && searchNumbersGroup['from'].errors }">
@@ -38,7 +39,7 @@
                     </div>
             </div>
 
-            <div class="mb-3" *ngIf="!isSearchingText()">
+            <div class="mb-3" *ngIf="isSearchingNumbers()">
                 <mat-card-title class="card-title">To</mat-card-title>
                 <input type="number" class="form-control" formControlName="to"
                     [ngClass]="{ 'is-invalid': submittedSearch && searchNumbersGroup['to'].errors }">

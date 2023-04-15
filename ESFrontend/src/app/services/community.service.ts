@@ -40,6 +40,10 @@ export class CommunityService {
         return this.http.get<Community[]>(`${environment.baseApiUrl}/${this.url}/numberOfPosts/` + from + `/to/` + to)
     }
 
+    public GetAllByAverageKarma(from: String, to: String): Observable<Community[]> {
+        return this.http.get<Community[]>(`${environment.baseApiUrl}/${this.url}/averageKarma/` + from + `/to/` + to)
+    }
+
     public GetCommunityPosts(community_id: number): Observable<Post[]> {
         return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/posts/` + community_id);
     }

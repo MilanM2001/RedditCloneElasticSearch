@@ -8,7 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticPost;
+import sr57.ftn.reddit.project.elasticservice.ElasticCommunityService;
 import sr57.ftn.reddit.project.elasticservice.ElasticPostService;
 import sr57.ftn.reddit.project.model.dto.reactionDTOs.ReactionDTO;
 import sr57.ftn.reddit.project.model.dto.reactionDTOs.ReactionForCommentAndPost;
@@ -34,15 +36,20 @@ public class ReactionController {
     final PostService postService;
     final CommentService commentService;
     final ElasticPostService elasticPostService;
+    final ElasticCommunityService elasticCommunityService;
 
     @Autowired
-    public ReactionController(UserService userService, ModelMapper modelMapper, ReactionService reactionService, PostService postService, CommentService commentService, ElasticPostService elasticPostService) {
+    public ReactionController(UserService userService, ModelMapper modelMapper,
+                              ReactionService reactionService, PostService postService,
+                              CommentService commentService, ElasticPostService elasticPostService,
+                              ElasticCommunityService elasticCommunityService) {
         this.userService = userService;
         this.modelMapper = modelMapper;
         this.reactionService = reactionService;
         this.postService = postService;
         this.commentService = commentService;
         this.elasticPostService = elasticPostService;
+        this.elasticCommunityService = elasticCommunityService;
     }
 
     @GetMapping(value = "/postKarma/{post_id}")
@@ -103,9 +110,23 @@ public class ReactionController {
             }
         }
 
+        ElasticCommunity elasticCommunity = elasticCommunityService.findByCommunityId(post.getCommunity().getCommunity_id());
+
         ElasticPost elasticPost = elasticPostService.findByPostId(reactionDTO.getPost_id());
         elasticPost.setKarma(karma);
         elasticPostService.update(elasticPost);
+
+        Integer numberOfPosts = postService.countPostsByCommunityId(elasticCommunity.getCommunity_id());
+        List<ElasticPost> elasticPosts = elasticPostService.findAllByCommunityName(elasticCommunity.getName());
+        double totalKarma = 0.0;
+        for (ElasticPost eachElasticPost: elasticPosts) {
+            totalKarma += eachElasticPost.getKarma();
+        }
+
+        Double averageKarmaOfCommunity = totalKarma/numberOfPosts;
+
+        elasticCommunity.setAverageKarma(averageKarmaOfCommunity);
+        elasticCommunityService.index(elasticCommunity);
 
         return new ResponseEntity<>(modelMapper.map(savedReaction, ReactionForCommentAndPost.class), HttpStatus.CREATED);
     }

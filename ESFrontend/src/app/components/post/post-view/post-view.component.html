@@ -14,8 +14,8 @@
         <span>&#8595;</span>
       </button>
 </mat-card>
-<button *ngIf="isLoggedIn()" class="btn btn-warning" [routerLink]="['/Post-Edit', post.post_id]">Update</button>
-<button *ngIf="isLoggedIn()" class="btn btn-danger" (click)="deletePost()">Delete</button>
+<button *ngIf="isLoggedIn() && isByUser()" class="btn btn-warning" [routerLink]="['/Post-Edit', post.post_id]">Update</button>
+<button *ngIf="isLoggedIn() && isByUser()" class="btn btn-danger" (click)="deletePost()">Delete</button>
 
 <mat-card class="add-comment-card" *ngIf="isLoggedIn()">
   <mat-card-title class="comment-title">Comment</mat-card-title>
