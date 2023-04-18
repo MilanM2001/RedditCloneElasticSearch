@@ -9,11 +9,8 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.SimpleQueryEs;
-import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs.ElasticCommunityResponseDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.ElasticPostResponseDTO;
-import sr57.ftn.reddit.project.elasticmodel.elasticdto.mapper.ElasticCommunityMapper;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.mapper.ElasticPostMapper;
-import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticPost;
 import sr57.ftn.reddit.project.elasticrepository.ElasticPostRepository;
 
@@ -69,14 +66,14 @@ public class ElasticPostService {
 
     public List<ElasticPostResponseDTO> findByKarma(double from, double to) {
         String range = from + "-" + to;
-        QueryBuilder numberOfPostsQuery = SearchQueryGenerator.createRangeQueryBuilder(new SimpleQueryEs("karma", range));
-        return ElasticPostMapper.mapDtos(searchBoolQuery(numberOfPostsQuery));
+        QueryBuilder karmaQuery = SearchQueryGenerator.createRangeQueryBuilder(new SimpleQueryEs("karma", range));
+        return ElasticPostMapper.mapDtos(searchBoolQuery(karmaQuery));
     }
 
     public List<ElasticPostResponseDTO> findByNumberOfComments(double from, double to) {
         String range = from + "-" + to;
-        QueryBuilder numberOfPostsQuery = SearchQueryGenerator.createRangeQueryBuilder(new SimpleQueryEs("numberOfComments", range));
-        return ElasticPostMapper.mapDtos(searchBoolQuery(numberOfPostsQuery));
+        QueryBuilder numberOfCommentsQuery = SearchQueryGenerator.createRangeQueryBuilder(new SimpleQueryEs("numberOfComments", range));
+        return ElasticPostMapper.mapDtos(searchBoolQuery(numberOfCommentsQuery));
     }
 
     private SearchHits<ElasticPost> searchBoolQuery(QueryBuilder boolQueryBuilder) {

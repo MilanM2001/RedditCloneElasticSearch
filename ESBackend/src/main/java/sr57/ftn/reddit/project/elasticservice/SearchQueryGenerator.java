@@ -7,7 +7,7 @@ import sr57.ftn.reddit.project.util.SearchType;
 
 public class SearchQueryGenerator {
 
-    public static org.elasticsearch.index.query.QueryBuilder createMatchQueryBuilder(SimpleQueryEs simpleQueryEs) {
+    public static QueryBuilder createMatchQueryBuilder(SimpleQueryEs simpleQueryEs) {
         if(simpleQueryEs.getValue().startsWith("\"") && simpleQueryEs.getValue().endsWith("\"")) {
             return QueryBuilderCustom.buildQuery(SearchType.PHRASE, simpleQueryEs.getField(), simpleQueryEs.getValue());
         } else {

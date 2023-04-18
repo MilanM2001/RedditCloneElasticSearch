@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.Setting;
 
 
 @Setter
@@ -13,6 +14,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(indexName = "communities")
+@Setting(settingPath = "/analyzers/serbianAnalyzer.json")
 public class ElasticCommunity {
     @Id
     private Integer community_id;
@@ -28,4 +30,9 @@ public class ElasticCommunity {
 
     @Field(type = FieldType.Double)
     private Double averageKarma;
+
+    @Field(type = FieldType.Text)
+    private String pdfDescription;
+
+    private String filename;
 }

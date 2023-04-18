@@ -1,9 +1,7 @@
 package sr57.ftn.reddit.project.elasticmodel.elasticdto.mapper;
 
 import org.springframework.data.elasticsearch.core.SearchHits;
-import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs.ElasticCommunityResponseDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.ElasticPostResponseDTO;
-import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticPost;
 
 import java.util.List;

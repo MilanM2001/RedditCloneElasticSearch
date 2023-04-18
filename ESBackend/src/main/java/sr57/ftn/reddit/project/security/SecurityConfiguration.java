@@ -78,12 +78,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/communities/single/{community_id}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/findAllByName/{name}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/findAllByDescription/{description}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/communities/findAllByNameAndDescription/{name}/{description}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/numberOfPosts/{from}/to/{to}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/averageKarma/{from}/to/{to}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/posts/{community_id}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/posts/elasticPosts/{name}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/rules/{community_id}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/flairs/{community_id}").permitAll()
+
+                .antMatchers(HttpMethod.POST, "api/communities/pdf").permitAll() //TEST
 
                 .antMatchers(HttpMethod.GET, "/api/users/all").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/users/single/{user_id}").permitAll()

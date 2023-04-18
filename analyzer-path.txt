@@ -1,0 +1,1 @@
+./elasticsearch-plugin install file:C:\Users\milju\OneDrive\Desktop\RedditCloneElasticsearch\serbian-analyzer-1.0-SNAPSHOT.zip

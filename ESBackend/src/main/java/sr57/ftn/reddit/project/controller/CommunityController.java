@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs.ElasticCommunityDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs.ElasticCommunityResponseDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticPost;
@@ -23,6 +24,7 @@ import sr57.ftn.reddit.project.model.dto.ruleDTOs.RuleDTO;
 import sr57.ftn.reddit.project.model.entity.*;
 import sr57.ftn.reddit.project.service.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -93,6 +95,13 @@ public class CommunityController {
     @GetMapping(value = "/findAllByDescription/{description}")
     public ResponseEntity<List<ElasticCommunity>> GetAllByDescription(@PathVariable String description) {
         List<ElasticCommunity> elasticCommunities = elasticCommunityService.findAllByDescription(description);
+
+        return new ResponseEntity<>(elasticCommunities, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/findAllByNameAndDescription/{name}/{description}")
+    public ResponseEntity<List<ElasticCommunityResponseDTO>> GetAllByNameAndDescription(@PathVariable String name, @PathVariable String description) {
+        List<ElasticCommunityResponseDTO> elasticCommunities = elasticCommunityService.findAllByNameAndDescription(name, description);
 
         return new ResponseEntity<>(elasticCommunities, HttpStatus.OK);
     }
@@ -192,6 +201,11 @@ public class CommunityController {
         moderatorService.save(newModerator);
 
         return new ResponseEntity<>(modelMapper.map(newCommunity, AddCommunityDTO.class), HttpStatus.CREATED);
+    }
+
+    @PostMapping(path = "/pdf", consumes = {"multipart/form-data"})
+    public void uploadPDF(@ModelAttribute ElasticCommunityDTO uploadModel) throws IOException {
+        elasticCommunityService.indexUploadedFile(uploadModel);
     }
 
     @PutMapping(value = "/update/{community_id}")
