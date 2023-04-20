@@ -10,7 +10,7 @@ import sr57.ftn.reddit.project.util.SearchType;
 @Getter
 @Setter
 public class QueryBuilderCustom {
-    private static int maxEdits = 1;
+    private static int maxEdits = 2;
 
     public static QueryBuilder buildQuery(SearchType queryType, String field, String value) throws IllegalArgumentException {
         validateQueryFields(field, value);

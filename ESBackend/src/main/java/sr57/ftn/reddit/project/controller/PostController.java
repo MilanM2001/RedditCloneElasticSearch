@@ -24,6 +24,7 @@ import sr57.ftn.reddit.project.model.entity.*;
 import sr57.ftn.reddit.project.model.enums.ReactionType;
 import sr57.ftn.reddit.project.model.enums.ReportStatus;
 import sr57.ftn.reddit.project.service.*;
+import sr57.ftn.reddit.project.util.SearchType;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -84,16 +85,18 @@ public class PostController {
         return new ResponseEntity<>(postDTO, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/findAllByTitle/{title}")
-    public ResponseEntity<List<ElasticPost>> GetAllByTitle(@PathVariable String title) {
-        List<ElasticPost> elasticPosts = elasticPostService.findAllByTitle(title);
+    @GetMapping(value = "/findAllByTitle/{title}/{searchType}")
+    public ResponseEntity<List<ElasticPostResponseDTO>> GetAllByTitle(@PathVariable String title, @PathVariable String searchType) {
+        SearchType search = SearchType.valueOf(searchType);
+        List<ElasticPostResponseDTO> elasticPosts = elasticPostService.findAllByTitle(title, search);
 
         return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/findAllByText/{text}")
-    public ResponseEntity<List<ElasticPost>> GetAllByText(@PathVariable String text) {
-        List<ElasticPost> elasticPosts = elasticPostService.findAllByText(text);
+    @GetMapping(value = "/findAllByText/{text}/{searchType}")
+    public ResponseEntity<List<ElasticPostResponseDTO>> GetAllByText(@PathVariable String text, @PathVariable String searchType) {
+        SearchType search = SearchType.valueOf(searchType);
+        List<ElasticPostResponseDTO> elasticPosts = elasticPostService.findAllByText(text, search);
 
         return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
     }

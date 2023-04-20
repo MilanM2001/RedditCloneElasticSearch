@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticComment;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticPost;
 import sr57.ftn.reddit.project.elasticservice.ElasticPostService;
 import sr57.ftn.reddit.project.model.dto.commentDTOs.AddCommentDTO;
@@ -19,6 +20,7 @@ import sr57.ftn.reddit.project.model.enums.ReportStatus;
 import sr57.ftn.reddit.project.service.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @RestController
 @RequestMapping("api/comments")

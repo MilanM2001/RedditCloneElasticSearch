@@ -25,6 +25,10 @@ export class MainPageComponent implements OnInit {
     flair: new FormControl('')
   })
 
+  searchTypeFormGroup: FormGroup = new FormGroup({
+    search_type: new FormControl('')
+  })
+
   optionFormGroup: FormGroup = new FormGroup({
     search_option: new FormControl('')
   })
@@ -33,6 +37,7 @@ export class MainPageComponent implements OnInit {
   flairs: Array<Flair> = [];
   submittedSearch = false;
   submittedOption = false;
+  submittedType = false;
   no_results = false;
 
   constructor(private postService: PostService,
@@ -51,6 +56,10 @@ export class MainPageComponent implements OnInit {
 
     this.searchFormFlairGroup = this.formBuilder.group({
       flair: ['', [Validators.required]]
+    })
+
+    this.searchTypeFormGroup = this.formBuilder.group({
+      search_type: ['', [Validators.required]]
     })
 
     this.optionFormGroup = this.formBuilder.group({
@@ -90,6 +99,10 @@ export class MainPageComponent implements OnInit {
     return this.searchFormFlairGroup.controls;
   }
 
+  get searchTypeGroup(): { [key: string]: AbstractControl } {
+    return this.searchTypeFormGroup.controls;
+  }
+
   get optionGroup(): { [key: string]: AbstractControl } {
     return this.optionFormGroup.controls;
   }
@@ -97,12 +110,16 @@ export class MainPageComponent implements OnInit {
   search() {
     this.submittedSearch = true;
     this.submittedOption = true;
+    this.submittedType = true;
 
     let search_option;
     search_option = this.optionFormGroup.get('search_option')?.value;
 
     if (search_option == 1 || search_option == 2) {
       if (this.searchFormInputGroup.invalid) {
+        return;
+      }
+      if (this.searchTypeFormGroup.invalid) {
         return;
       }
     }
@@ -135,9 +152,12 @@ export class MainPageComponent implements OnInit {
     let flair;
     flair = this.searchFormFlairGroup.get('flair')?.value;
 
+    let searchType;
+    searchType = this.searchTypeFormGroup.get('search_type')?.value;
+
     //Search by Title
     if (search_option == 1) {
-      this.postService.GetAllByTitle(search_input)
+      this.postService.GetAllByTitle(search_input, searchType)
         .subscribe({
           next: (data: Post[]) => {
             this.posts = data;
@@ -156,7 +176,7 @@ export class MainPageComponent implements OnInit {
 
     //Search by Text
     if (search_option == 2) {
-      this.postService.GetAllByText(search_input)
+      this.postService.GetAllByText(search_input, searchType)
         .subscribe({
           next: (data: Post[]) => {
             this.posts = data;

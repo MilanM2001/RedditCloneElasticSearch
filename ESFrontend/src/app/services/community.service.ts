@@ -28,12 +28,12 @@ export class CommunityService {
         return this.http.get<Community>(`${environment.baseApiUrl}/${this.url}/single/` + community_id);
     }
 
-    public GetAllByName(name: String): Observable<Community[]> {
-        return this.http.get<Community[]>(`${environment.baseApiUrl}/${this.url}/findAllByName/` + name);
+    public GetAllByName(name: String, searchType: String): Observable<Community[]> {
+        return this.http.get<Community[]>(`${environment.baseApiUrl}/${this.url}/findAllByName/` + name + '/' + searchType);
     }
 
-    public GetAllByDescription(description: String): Observable<Community[]> {
-        return this.http.get<Community[]>(`${environment.baseApiUrl}/${this.url}/findAllByDescription/` + description);
+    public GetAllByDescription(description: String, searchType: String): Observable<Community[]> {
+        return this.http.get<Community[]>(`${environment.baseApiUrl}/${this.url}/findAllByDescription/` + description + '/' + searchType);
     }
 
     public GetAllByNumberOfPosts(from: String, to: String): Observable<Community[]> {

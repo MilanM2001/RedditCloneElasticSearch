@@ -20,6 +20,7 @@ import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
 import sr57.ftn.reddit.project.elasticrepository.ElasticCommunityRepository;
 import sr57.ftn.reddit.project.lucene.indexing.handlers.DocumentHandler;
 import sr57.ftn.reddit.project.lucene.indexing.handlers.PDFHandler;
+import sr57.ftn.reddit.project.util.SearchType;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,12 +98,24 @@ public class ElasticCommunityService {
         return elasticCommunityRepository.findById(community_id).orElseGet(null);
     }
 
-    public List<ElasticCommunity> findAllByName(String name) {
-        return elasticCommunityRepository.findAllByName(name);
+    public List<ElasticCommunityResponseDTO> findAllByName(String name, SearchType searchType) {
+        QueryBuilder nameQuery = SearchQueryGenerator.createMatchQueryBuilderTerm(searchType, new SimpleQueryEs("name", name));
+
+        BoolQueryBuilder boolQueryName = QueryBuilders
+                .boolQuery()
+                .should(nameQuery);
+
+        return ElasticCommunityMapper.mapDtos(searchBoolQuery(boolQueryName));
     }
 
-    public List<ElasticCommunity> findAllByDescription(String description) {
-        return elasticCommunityRepository.findAllByDescription(description);
+    public List<ElasticCommunityResponseDTO> findAllByDescription(String name, SearchType searchType) {
+        QueryBuilder descriptionQuery = SearchQueryGenerator.createMatchQueryBuilderTerm(searchType, new SimpleQueryEs("description", name));
+
+        BoolQueryBuilder boolQueryDescription = QueryBuilders
+                .boolQuery()
+                .should(descriptionQuery);
+
+        return ElasticCommunityMapper.mapDtos(searchBoolQuery(boolQueryDescription));
     }
 
     public List<ElasticCommunityResponseDTO> findAllByNameAndDescription(String name, String description) {

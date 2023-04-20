@@ -19,7 +19,7 @@ public class ElasticCommunity {
     @Id
     private Integer community_id;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text)
     private String name;
 
     @Field(type = FieldType.Text)

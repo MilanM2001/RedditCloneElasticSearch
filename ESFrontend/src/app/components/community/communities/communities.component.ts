@@ -10,38 +10,47 @@ import { CommunityService } from 'src/app/services/community.service';
 })
 export class CommunitiesComponent implements OnInit {
 
-  searchFormInputGroup: FormGroup = new FormGroup({
+  searchInputFormGroup: FormGroup = new FormGroup({
     search_input: new FormControl('')
   })
 
-  searchFormNumbersGroup: FormGroup = new FormGroup({
+  searchNumbersFormGroup: FormGroup = new FormGroup({
     from: new FormControl(''),
     to: new FormControl('')
   })
 
-  optionFormGroup: FormGroup = new FormGroup({
+  searchTypeFormGroup: FormGroup = new FormGroup({
+    search_type: new FormControl('')
+  })
+
+  searchOptionFormGroup: FormGroup = new FormGroup({
     search_option: new FormControl('')
   })
 
   communities: Array<Community> = [];
   submittedSearch = false;
   submittedOption = false;
+  submittedType = false;
   no_results = false;
 
   constructor(private communityService: CommunityService,
               private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
-    this.searchFormInputGroup = this.formBuilder.group({
+    this.searchInputFormGroup = this.formBuilder.group({
       search_input: ['', [Validators.required]]
     })
 
-    this.searchFormNumbersGroup = this.formBuilder.group({
+    this.searchNumbersFormGroup = this.formBuilder.group({
       from: ['', [Validators.required, Validators.min(0), Validators.max(1000)]],
       to: ['', [Validators.required, Validators.min(0), Validators.max(1000)]]
     })
 
-    this.optionFormGroup = this.formBuilder.group({
+    this.searchTypeFormGroup = this.formBuilder.group({
+      search_type: ['', [Validators.required]]
+    })
+
+    this.searchOptionFormGroup = this.formBuilder.group({
       search_option: ['', [Validators.required]]
     })
 
@@ -57,52 +66,63 @@ export class CommunitiesComponent implements OnInit {
   }
 
   get searchInputGroup(): { [key: string]: AbstractControl} {
-    return this.searchFormInputGroup.controls;
+    return this.searchInputFormGroup.controls;
   }
 
   get searchNumbersGroup(): { [key: string]: AbstractControl } {
-    return this.searchFormNumbersGroup.controls;
+    return this.searchNumbersFormGroup.controls;
   }
 
-  get optionGroup(): { [key: string]: AbstractControl } {
-    return this.optionFormGroup.controls;
+  get searchTypeGroup(): { [key: string]: AbstractControl } {
+    return this.searchTypeFormGroup.controls;
+  }
+
+  get searchOptionGroup(): { [key: string]: AbstractControl } {
+    return this.searchOptionFormGroup.controls;
   }
 
   search() {
     this.submittedSearch = true;
     this.submittedOption = true;
+    this.submittedType = true;
 
     let search_option;
-    search_option = this.optionFormGroup.get('search_option')?.value;
+    search_option = this.searchOptionFormGroup.get('search_option')?.value;
 
     if (search_option == 1 || search_option == 2) {
-      if (this.searchFormInputGroup.invalid) {
+      if (this.searchInputFormGroup.invalid) {
+        return;
+      }
+      if (this.searchTypeFormGroup.invalid) {
         return;
       }
     }
 
     if (search_option == 3 || search_option == 4) {
-      if (this.searchFormNumbersGroup.invalid) {
+      if (this.searchNumbersFormGroup.invalid) {
         return;
       }
     }
 
-    if (this.optionFormGroup.invalid) {
+    if (this.searchOptionFormGroup.invalid) {
       return;
     }
 
     let search_input;
-    search_input = this.searchFormInputGroup.get('search_input')?.value;
+    search_input = this.searchInputFormGroup.get('search_input')?.value;
 
     let from;
-    from = this.searchFormNumbersGroup.get('from')?.value;
+    from = this.searchNumbersFormGroup.get('from')?.value;
 
     let to;
-    to = this.searchFormNumbersGroup.get('to')?.value;
+    to = this.searchNumbersFormGroup.get('to')?.value;
+
+    let searchType;
+    searchType = this.searchTypeFormGroup.get('search_type')?.value;
 
     //Search by Name
     if (search_option == 1) {
-      this.communityService.GetAllByName(search_input)
+      this.communityService.GetAllByName(search_input, searchType)
         .subscribe({
           next: (data: Community[]) => {
             this.communities = data;
@@ -121,7 +141,7 @@ export class CommunitiesComponent implements OnInit {
 
     //Search by Description
     if (search_option == 2) {
-      this.communityService.GetAllByDescription(search_input)
+      this.communityService.GetAllByDescription(search_input, searchType)
         .subscribe({
           next: (data: Community[]) => {
             this.communities = data;
@@ -178,7 +198,7 @@ export class CommunitiesComponent implements OnInit {
   }
 
   isSearchingText(): boolean {
-    let search_option = this.optionFormGroup.get('search_option')?.value;
+    let search_option = this.searchOptionFormGroup.get('search_option')?.value;
 
     if (search_option == 1 || search_option == 2 || search_option == '') {
       return true;
@@ -188,7 +208,7 @@ export class CommunitiesComponent implements OnInit {
   }
 
   isSearchingNumbers(): boolean {
-    let search_option = this.optionFormGroup.get('search_option')?.value;
+    let search_option = this.searchOptionFormGroup.get('search_option')?.value;
 
     if (search_option == 3 || search_option == 4) {
       return true;

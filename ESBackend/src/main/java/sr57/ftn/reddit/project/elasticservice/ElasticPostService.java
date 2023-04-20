@@ -1,6 +1,8 @@
 package sr57.ftn.reddit.project.elasticservice;
 
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHits;
@@ -9,10 +11,13 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.SimpleQueryEs;
+import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs.ElasticCommunityResponseDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.ElasticPostResponseDTO;
+import sr57.ftn.reddit.project.elasticmodel.elasticdto.mapper.ElasticCommunityMapper;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.mapper.ElasticPostMapper;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticPost;
 import sr57.ftn.reddit.project.elasticrepository.ElasticPostRepository;
+import sr57.ftn.reddit.project.util.SearchType;
 
 import java.util.List;
 
@@ -52,12 +57,24 @@ public class ElasticPostService {
         return elasticPostRepository.findAllByFlair_Name(name);
     }
 
-    public List<ElasticPost> findAllByTitle(String title) {
-        return elasticPostRepository.findAllByTitle(title);
+    public List<ElasticPostResponseDTO> findAllByTitle(String title, SearchType searchType) {
+        QueryBuilder titleQuery = SearchQueryGenerator.createMatchQueryBuilderTerm(searchType, new SimpleQueryEs("title", title));
+
+        BoolQueryBuilder boolQueryTitle = QueryBuilders
+                .boolQuery()
+                .should(titleQuery);
+
+        return ElasticPostMapper.mapDtos(searchBoolQuery(boolQueryTitle));
     }
 
-    public List<ElasticPost> findAllByText(String text) {
-        return elasticPostRepository.findAllByText(text);
+    public List<ElasticPostResponseDTO> findAllByText(String text, SearchType searchType) {
+        QueryBuilder textQuery = SearchQueryGenerator.createMatchQueryBuilderTerm(searchType, new SimpleQueryEs("text", text));
+
+        BoolQueryBuilder boolQueryText = QueryBuilders
+                .boolQuery()
+                .should(textQuery);
+
+        return ElasticPostMapper.mapDtos(searchBoolQuery(boolQueryText));
     }
 
     public void remove(Integer post_id) {

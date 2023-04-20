@@ -23,6 +23,7 @@ import sr57.ftn.reddit.project.model.dto.postDTOs.PostDTO;
 import sr57.ftn.reddit.project.model.dto.ruleDTOs.RuleDTO;
 import sr57.ftn.reddit.project.model.entity.*;
 import sr57.ftn.reddit.project.service.*;
+import sr57.ftn.reddit.project.util.SearchType;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -85,16 +86,18 @@ public class CommunityController {
         return new ResponseEntity<>(communityDTO, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/findAllByName/{name}")
-    public ResponseEntity<List<ElasticCommunity>> GetAllByName(@PathVariable String name) {
-        List<ElasticCommunity> elasticCommunities = elasticCommunityService.findAllByName(name);
+    @GetMapping(value = "/findAllByName/{name}/{searchType}")
+    public ResponseEntity<List<ElasticCommunityResponseDTO>> GetAllByNameQuery(@PathVariable String name, @PathVariable String searchType) {
+        SearchType search = SearchType.valueOf(searchType);
+        List<ElasticCommunityResponseDTO> elasticCommunities = elasticCommunityService.findAllByName(name, search);
 
         return new ResponseEntity<>(elasticCommunities, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/findAllByDescription/{description}")
-    public ResponseEntity<List<ElasticCommunity>> GetAllByDescription(@PathVariable String description) {
-        List<ElasticCommunity> elasticCommunities = elasticCommunityService.findAllByDescription(description);
+    @GetMapping(value = "/findAllByDescription/{description}/{searchType}")
+    public ResponseEntity<List<ElasticCommunityResponseDTO>> GetAllByDescription(@PathVariable String description, @PathVariable String searchType) {
+        SearchType search = SearchType.valueOf(searchType);
+        List<ElasticCommunityResponseDTO> elasticCommunities = elasticCommunityService.findAllByDescription(description, search);
 
         return new ResponseEntity<>(elasticCommunities, HttpStatus.OK);
     }

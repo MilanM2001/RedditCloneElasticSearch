@@ -25,12 +25,12 @@ export class PostService {
     return this.http.get<Post>(`${environment.baseApiUrl}/${this.url}/single/` + post_id);
   }
 
-  public GetAllByTitle(title: String): Observable<Post[]> {
-    return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/findAllByTitle/` + title);
+  public GetAllByTitle(title: String, searchType: String): Observable<Post[]> {
+    return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/findAllByTitle/` + title + '/' + searchType);
   }
 
-  public GetAllByText(text: String): Observable<Post[]> {
-    return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/findAllByText/` + text);
+  public GetAllByText(text: String, searchType: String): Observable<Post[]> {
+    return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/findAllByText/` + text + '/' + searchType);
   }
 
   public GetAllByKarma(from: String, to: String): Observable<Post[]> {

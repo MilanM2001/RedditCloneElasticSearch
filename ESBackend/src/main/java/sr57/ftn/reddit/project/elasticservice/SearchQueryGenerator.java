@@ -15,6 +15,10 @@ public class SearchQueryGenerator {
         }
     }
 
+    public static QueryBuilder createMatchQueryBuilderTerm(SearchType searchType, SimpleQueryEs simpleQueryEs) {
+        return QueryBuilderCustom.buildQuery(searchType, simpleQueryEs.getField(), simpleQueryEs.getValue());
+    }
+
     public static QueryBuilder createRangeQueryBuilder(SimpleQueryEs simpleQueryEs) {
         return QueryBuilderCustom.buildQuery(SearchType.RANGE, simpleQueryEs.getField(), simpleQueryEs.getValue());
     }

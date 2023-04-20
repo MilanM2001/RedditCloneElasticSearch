@@ -1,21 +1,38 @@
 <h1 class="welcome">All Communities</h1>
         <mat-card-title class="search-bar">Search By</mat-card-title>
-        <form [formGroup]="optionFormGroup">
+        <form [formGroup]="searchOptionFormGroup">
             <div class="radio-group">
                 <mat-radio-group formControlName="search_option"
-                    [ngClass]="{ 'is-invalid': submittedOption && optionGroup['search_option'].errors }">
+                    [ngClass]="{ 'is-invalid': submittedOption && searchOptionGroup['search_option'].errors }">
                     <mat-radio-button class="radio-button" value="1">Name</mat-radio-button>
                     <mat-radio-button class="radio-button" value="2">Description</mat-radio-button>
                     <mat-radio-button class="radio-button" value="3">Number of Posts</mat-radio-button>
                     <mat-radio-button class="radio-button" value="4">Average Karma</mat-radio-button>
                 </mat-radio-group>
-                <div *ngIf="submittedOption && optionGroup['search_option'].errors" class="invalid-feedback">
-                    <div *ngIf="optionGroup['search_option'].errors['required']">Choose an option.</div>
+                <div *ngIf="submittedOption && searchOptionGroup['search_option'].errors" class="invalid-feedback">
+                    <div *ngIf="searchOptionGroup['search_option'].errors['required']">Choose an option.</div>
                 </div>
             </div>
         </form>
 
-        <form [formGroup]="searchFormInputGroup">
+        <div *ngIf="isSearchingText()">
+            <mat-card-title class="search-bar">Search Type</mat-card-title>
+            <form [formGroup]="searchTypeFormGroup">
+                <div class="radio-group">
+                    <mat-radio-group formControlName="search_type"
+                        [ngClass]="{ 'is-invalid': submittedType && searchTypeGroup['search_type'].errors }">
+                        <mat-radio-button class="radio-button" value="FUZZY">Fuzzy</mat-radio-button>
+                        <mat-radio-button class="radio-button" value="PHRASE">Phrase</mat-radio-button>
+                    </mat-radio-group>
+                    <div *ngIf="submittedType && searchTypeGroup['search_type'].errors" class="invalid-feedback">
+                        <div *ngIf="searchTypeGroup['search_type'].errors['required']">Choose an option.</div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <form [formGroup]="searchInputFormGroup">
 
             <div class="mb-3 w-25">
                 <input *ngIf="isSearchingText()" type="text" class="form-control" formControlName="search_input"
@@ -27,7 +44,7 @@
 
         </form>
 
-        <form [formGroup]="searchFormNumbersGroup">
+        <form [formGroup]="searchNumbersFormGroup">
 
             <div class="mb-3" *ngIf="isSearchingNumbers()">
                 <mat-card-title class="card-title">From</mat-card-title>

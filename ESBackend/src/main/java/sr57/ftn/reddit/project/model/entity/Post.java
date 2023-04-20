@@ -50,7 +50,7 @@ public class Post implements Serializable {
 
     //Post has many Comments
     @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
-    private Set<Comment> comments = new HashSet<Comment>();
+    private Set<Comment> comments = new HashSet<>();
 
     //Post has many Reactions
     @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
@@ -58,5 +58,5 @@ public class Post implements Serializable {
 
     //Post has many Reports
     @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
-    private Set<Report> reports = new HashSet<Report>();
+    private Set<Report> reports = new HashSet<>();
 }
