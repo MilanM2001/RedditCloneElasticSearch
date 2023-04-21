@@ -17,6 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddCommunityDTO implements Serializable {
+    private Integer community_id;
     private String name;
     private String description;
     private Set<RuleDTO> rules = new HashSet<>();

@@ -157,7 +157,7 @@ public class CommunityController {
     @PostMapping(value = "/add")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @CrossOrigin
-    public ResponseEntity<AddCommunityDTO> AddCommunity(@RequestBody AddCommunityDTO addCommunityDTO, Authentication authentication) {
+    public ResponseEntity<AddCommunityDTO> AddCommunity(@RequestBody AddCommunityDTO addCommunityDTO, Authentication authentication) throws IOException {
         User user = userService.findByUsername(authentication.getName());
         Optional<Community> name = communityService.findFirstByName(addCommunityDTO.getName());
 
@@ -189,24 +189,17 @@ public class CommunityController {
             flairService.save(newFlair);
         }
 
-        ElasticCommunity elasticCommunity = new ElasticCommunity();
-
-        elasticCommunity.setCommunity_id(newCommunity.getCommunity_id());
-        elasticCommunity.setName(addCommunityDTO.getName());
-        elasticCommunity.setDescription(addCommunityDTO.getDescription());
-        elasticCommunity.setNumberOfPosts(0);
-        elasticCommunity.setAverageKarma(0.0);
-        elasticCommunityService.index(elasticCommunity);
-
-        Moderator newModerator = new Moderator();
-        newModerator.setUser(user);
-        newModerator.setCommunity(newCommunity);
-        moderatorService.save(newModerator);
+//        Moderator newModerator = new Moderator();
+//        newModerator.setUser(user);
+//        newModerator.setCommunity(newCommunity);
+//        moderatorService.save(newModerator);
 
         return new ResponseEntity<>(modelMapper.map(newCommunity, AddCommunityDTO.class), HttpStatus.CREATED);
     }
 
     @PostMapping(path = "/pdf", consumes = {"multipart/form-data"})
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @CrossOrigin
     public void uploadPDF(@ModelAttribute ElasticCommunityDTO uploadModel) throws IOException {
         elasticCommunityService.indexUploadedFile(uploadModel);
     }

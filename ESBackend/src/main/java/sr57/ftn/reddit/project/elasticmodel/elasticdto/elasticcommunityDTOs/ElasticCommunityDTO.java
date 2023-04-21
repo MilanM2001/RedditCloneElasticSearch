@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @Builder
 public class ElasticCommunityDTO {
+    private Integer community_id;
     private String name;
     private String description;
     private MultipartFile[] files;

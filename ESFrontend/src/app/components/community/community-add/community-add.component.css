@@ -40,6 +40,12 @@
     font-size: 20px;
 }
 
+.upload-file {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    margin-left: 100px
+}
+
 .btn-primary {
     margin-top: 10px;
     float: right;

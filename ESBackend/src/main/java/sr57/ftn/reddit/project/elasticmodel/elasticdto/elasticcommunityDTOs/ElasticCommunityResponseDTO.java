@@ -1,9 +1,12 @@
 package sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
+@AllArgsConstructor
 @Builder
 public class ElasticCommunityResponseDTO {
     private Integer community_id;
@@ -11,4 +14,5 @@ public class ElasticCommunityResponseDTO {
     private String description;
     private Integer numberOfPosts;
     private Double averageKarma;
+    private String pdfDescription;
 }

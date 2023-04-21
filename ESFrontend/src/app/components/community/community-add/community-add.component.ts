@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AddCommunityDTO } from 'src/app/dto/addCommunityDTO';
-import { Community } from 'src/app/model/community.model';
 import { Flair } from 'src/app/model/flair.model';
 import { Rule } from 'src/app/model/rule.model';
 import { CommunityService } from 'src/app/services/community.service';
@@ -98,11 +97,15 @@ export class CommunityAddComponent implements OnInit {
   onSubmit() {
     this.submittedCommunity = true;
 
+    const file: File = this.event.target.files[0];
+
     if (this.communityFormGroup.invalid) {
       return;
     }
 
     let addCommunity: AddCommunityDTO = new AddCommunityDTO();
+    let uploadModel: FormData = new FormData();
+    let newCommunity_id: number;
 
     addCommunity.name = this.communityFormGroup.get('name')?.value;
     addCommunity.description = this.communityFormGroup.get('description')?.value;
@@ -111,16 +114,36 @@ export class CommunityAddComponent implements OnInit {
 
     this.communityService.AddCommunity(addCommunity)
       .subscribe({
-        next: (data: Community) => {
-          console.log(data);
-          this.router.navigateByUrl("/Communities");
-          console.log(addCommunity)
+        next: (data) => {
+          newCommunity_id = data.community_id;
         },
-        error: (error: Error) => {
+        error: (error) => {
           console.log(error);
-          console.log(addCommunity)
+        }, complete: () => {
+          uploadModel.append("community_id", String(newCommunity_id))
+          uploadModel.append("name", addCommunity.name);
+          uploadModel.append("description", addCommunity.description);
+          uploadModel.append("files", file);
+          this.communityService.AddElasticPDF(uploadModel)
+            .subscribe({
+              next: (data) => {
+                console.log("ADDED WITH PDF");
+              },
+              error: (error) => {
+                console.log(error);
+              }
+            })
+
+          this.router.navigateByUrl("/Communities");
         }
       })
   }
+
+  setEvent(event: any) {
+    this.event = event;
+    console.log(this.event)
+  }
+
+  event: any;
 
 }

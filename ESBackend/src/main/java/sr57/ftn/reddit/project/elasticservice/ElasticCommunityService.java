@@ -57,7 +57,7 @@ public class ElasticCommunityService {
             String fileName = saveUploadedFileInFolder(file);
             if (fileName != null) {
                 ElasticCommunity communityIndexUnit = getHandler(fileName).getIndexUnit(new File(fileName));
-                communityIndexUnit.setCommunity_id(1);
+                communityIndexUnit.setCommunity_id(elasticCommunityDTO.getCommunity_id());
                 communityIndexUnit.setName(elasticCommunityDTO.getName());
                 communityIndexUnit.setDescription(elasticCommunityDTO.getDescription());
                 communityIndexUnit.setNumberOfPosts(0);

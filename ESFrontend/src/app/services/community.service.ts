@@ -3,7 +3,6 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "src/environments/environment";
 import { AddCommunityDTO } from "../dto/addCommunityDTO";
-import { AddPostDTO } from "../dto/addPostDTO";
 import { Community } from "../model/community.model";
 import { Flair } from "../model/flair.model";
 import { Post } from "../model/post.model";
@@ -62,6 +61,10 @@ export class CommunityService {
 
     public AddCommunity(addCommunityDTO: AddCommunityDTO): Observable<Community> {
         return this.http.post<Community>(`${environment.baseApiUrl}/${this.url}/add`, addCommunityDTO);
+    }
+
+    public AddElasticPDF(uploadModel: FormData): Observable<Community> {
+        return this.http.post<Community>(`${environment.baseApiUrl}/${this.url}/pdf`, uploadModel);
     }
 
     public Update(community_id: number, community: Community) {
