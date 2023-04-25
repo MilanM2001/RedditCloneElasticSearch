@@ -6,8 +6,9 @@
                     [ngClass]="{ 'is-invalid': submittedOption && searchOptionGroup['search_option'].errors }">
                     <mat-radio-button class="radio-button" value="1">Name</mat-radio-button>
                     <mat-radio-button class="radio-button" value="2">Description</mat-radio-button>
-                    <mat-radio-button class="radio-button" value="3">Number of Posts</mat-radio-button>
-                    <mat-radio-button class="radio-button" value="4">Average Karma</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="3">PDF Desc.</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="4">Number of Posts</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="5">Average Karma</mat-radio-button>
                 </mat-radio-group>
                 <div *ngIf="submittedOption && searchOptionGroup['search_option'].errors" class="invalid-feedback">
                     <div *ngIf="searchOptionGroup['search_option'].errors['required']">Choose an option.</div>

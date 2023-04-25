@@ -97,8 +97,6 @@ export class CommunityAddComponent implements OnInit {
   onSubmit() {
     this.submittedCommunity = true;
 
-    const file: File = this.event.target.files[0];
-
     if (this.communityFormGroup.invalid) {
       return;
     }
@@ -120,21 +118,43 @@ export class CommunityAddComponent implements OnInit {
         error: (error) => {
           console.log(error);
         }, complete: () => {
-          uploadModel.append("community_id", String(newCommunity_id))
-          uploadModel.append("name", addCommunity.name);
-          uploadModel.append("description", addCommunity.description);
-          uploadModel.append("files", file);
-          this.communityService.AddElasticPDF(uploadModel)
-            .subscribe({
-              next: (data) => {
-                console.log("ADDED WITH PDF");
-              },
-              error: (error) => {
-                console.log(error);
-              }
-            })
 
-          this.router.navigateByUrl("/Communities");
+          if (this.event != undefined) {
+            const file: File = this.event.target.files[0];
+            uploadModel.append("community_id", String(newCommunity_id))
+            uploadModel.append("name", addCommunity.name);
+            uploadModel.append("description", addCommunity.description);
+            uploadModel.append("files", file);
+            
+            this.communityService.AddElasticPDF(uploadModel)
+              .subscribe({
+                next: (data) => {
+                  console.log("ADDED WITH PDF");
+                  this.router.navigateByUrl("/Communities");
+                },
+                error: (error) => {
+                  console.log(error);
+                }
+              })
+          } else {
+            uploadModel.append("community_id", String(newCommunity_id))
+            uploadModel.append("name", addCommunity.name);
+            uploadModel.append("description", addCommunity.description);
+            //Add List, test later
+            // this.flairs.forEach(flair => {
+            //   uploadModel.append("flairs", String(flair))
+            // });
+            this.communityService.AddElasticPDF(uploadModel)
+              .subscribe({
+                next: (data) => {
+                  console.log("ADDED WITHOUT PDF");
+                  this.router.navigateByUrl("/Communities");
+                },
+                error: (error) => {
+                  console.log(error);
+                }
+              })
+            }
         }
       })
   }

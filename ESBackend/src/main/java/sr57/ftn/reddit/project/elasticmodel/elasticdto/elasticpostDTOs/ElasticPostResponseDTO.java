@@ -17,4 +17,5 @@ public class ElasticPostResponseDTO {
     private ElasticCommunity community;
     private ElasticUser user;
     private ElasticFlair flair;
+    private String pdfDescription;
 }

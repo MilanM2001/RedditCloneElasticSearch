@@ -7,6 +7,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.text.PDFTextStripper;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticPost;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,8 +15,30 @@ import java.io.IOException;
 public class PDFHandler extends DocumentHandler {
 
     @Override
-    public ElasticCommunity getIndexUnit(File file) {
+    public ElasticCommunity getIndexUnitCommunity(File file) {
         ElasticCommunity retVal = new ElasticCommunity();
+        try {
+            PDFParser parser = new PDFParser((RandomAccessRead) new RandomAccessFile(file, "r"));
+            parser.parse();
+            String text = getText(parser);
+            retVal.setPdfDescription(text);
+
+            PDDocument pdf = parser.getPDDocument();
+            PDDocumentInformation info = pdf.getDocumentInformation();
+
+            retVal.setFilename(file.getCanonicalPath());
+
+            pdf.close();
+        } catch (IOException e) {
+            System.out.println("Error while converting document to PDF");
+        }
+
+        return retVal;
+    }
+
+    @Override
+    public ElasticPost getIndexUnitPost(File file) {
+        ElasticPost retVal = new ElasticPost();
         try {
             PDFParser parser = new PDFParser((RandomAccessRead) new RandomAccessFile(file, "r"));
             parser.parse();

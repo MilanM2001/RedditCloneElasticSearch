@@ -42,6 +42,11 @@ public class ElasticPost {
     @Field(type = FieldType.Object)
     private ElasticFlair flair;
 
+    @Field(type = FieldType.Text)
+    private String pdfDescription;
+
+    private String filename;
+
 //    @Field(type = FieldType.Nested)
 //    private Set<ElasticComment> comments = new HashSet<>();
 }

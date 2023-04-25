@@ -49,21 +49,33 @@ public class ElasticCommunityService {
     }
 
     public void indexUploadedFile(ElasticCommunityDTO elasticCommunityDTO) throws IOException {
-        for (MultipartFile file : elasticCommunityDTO.getFiles()) {
-            if (file.isEmpty()) {
-                continue;
-            }
+        if (elasticCommunityDTO.getFiles() != null) {
+            for (MultipartFile file : elasticCommunityDTO.getFiles()) {
+                if (file.isEmpty()) {
+                    continue;
+                }
 
-            String fileName = saveUploadedFileInFolder(file);
-            if (fileName != null) {
-                ElasticCommunity communityIndexUnit = getHandler(fileName).getIndexUnit(new File(fileName));
-                communityIndexUnit.setCommunity_id(elasticCommunityDTO.getCommunity_id());
-                communityIndexUnit.setName(elasticCommunityDTO.getName());
-                communityIndexUnit.setDescription(elasticCommunityDTO.getDescription());
-                communityIndexUnit.setNumberOfPosts(0);
-                communityIndexUnit.setAverageKarma(0.0);
-                index(communityIndexUnit);
+                String fileName = saveUploadedFileInFolder(file);
+                if (fileName != null) {
+                    ElasticCommunity communityIndexUnit = getHandler(fileName).getIndexUnitCommunity(new File(fileName));
+                    communityIndexUnit.setCommunity_id(elasticCommunityDTO.getCommunity_id());
+                    communityIndexUnit.setName(elasticCommunityDTO.getName());
+                    communityIndexUnit.setDescription(elasticCommunityDTO.getDescription());
+                    communityIndexUnit.setNumberOfPosts(0);
+                    communityIndexUnit.setAverageKarma(0.0);
+                    index(communityIndexUnit);
+                }
             }
+        } else {
+            ElasticCommunity communityIndexUnit = new ElasticCommunity();
+            communityIndexUnit.setCommunity_id(elasticCommunityDTO.getCommunity_id());
+            communityIndexUnit.setName(elasticCommunityDTO.getName());
+            communityIndexUnit.setDescription(elasticCommunityDTO.getDescription());
+            communityIndexUnit.setNumberOfPosts(0);
+            communityIndexUnit.setAverageKarma(0.0);
+            communityIndexUnit.setPdfDescription(null);
+            communityIndexUnit.setFilename(null);
+            index(communityIndexUnit);
         }
     }
 
@@ -103,19 +115,29 @@ public class ElasticCommunityService {
 
         BoolQueryBuilder boolQueryName = QueryBuilders
                 .boolQuery()
-                .should(nameQuery);
+                .must(nameQuery);
 
         return ElasticCommunityMapper.mapDtos(searchBoolQuery(boolQueryName));
     }
 
-    public List<ElasticCommunityResponseDTO> findAllByDescription(String name, SearchType searchType) {
-        QueryBuilder descriptionQuery = SearchQueryGenerator.createMatchQueryBuilderTerm(searchType, new SimpleQueryEs("description", name));
+    public List<ElasticCommunityResponseDTO> findAllByDescription(String description, SearchType searchType) {
+        QueryBuilder descriptionQuery = SearchQueryGenerator.createMatchQueryBuilderTerm(searchType, new SimpleQueryEs("description", description));
 
         BoolQueryBuilder boolQueryDescription = QueryBuilders
                 .boolQuery()
-                .should(descriptionQuery);
+                .must(descriptionQuery);
 
         return ElasticCommunityMapper.mapDtos(searchBoolQuery(boolQueryDescription));
+    }
+
+    public List<ElasticCommunityResponseDTO> findAllByPDFDescription(String pdfDescription, SearchType searchType) {
+        QueryBuilder pdfDescriptionQuery = SearchQueryGenerator.createMatchQueryBuilderTerm(searchType, new SimpleQueryEs("pdfDescription", pdfDescription));
+
+        BoolQueryBuilder boolQueryPDFDescription = QueryBuilders
+                .boolQuery()
+                .must(pdfDescriptionQuery);
+
+        return ElasticCommunityMapper.mapDtos(searchBoolQuery(boolQueryPDFDescription));
     }
 
     public List<ElasticCommunityResponseDTO> findAllByNameAndDescription(String name, String description) {

@@ -8,7 +8,5 @@ import java.util.List;
 
 @Repository
 public interface ElasticCommunityRepository extends ElasticsearchRepository<ElasticCommunity, Integer> {
-    List<ElasticCommunity> findAllByDescription(String description);
-    List<ElasticCommunity> findAllByName(String name);
     List<ElasticCommunity> findAll();
 }

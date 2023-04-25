@@ -102,6 +102,14 @@ public class CommunityController {
         return new ResponseEntity<>(elasticCommunities, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/findAllByPDFDescription/{pdfDescription}/{searchType}")
+    public ResponseEntity<List<ElasticCommunityResponseDTO>> GetAllByPDFDescription(@PathVariable String pdfDescription, @PathVariable String searchType) {
+        SearchType search = SearchType.valueOf(searchType);
+        List<ElasticCommunityResponseDTO> elasticCommunities = elasticCommunityService.findAllByPDFDescription(pdfDescription, search);
+
+        return new ResponseEntity<>(elasticCommunities, HttpStatus.OK);
+    }
+
     @GetMapping(value = "/findAllByNameAndDescription/{name}/{description}")
     public ResponseEntity<List<ElasticCommunityResponseDTO>> GetAllByNameAndDescription(@PathVariable String name, @PathVariable String description) {
         List<ElasticCommunityResponseDTO> elasticCommunities = elasticCommunityService.findAllByNameAndDescription(name, description);
@@ -157,7 +165,7 @@ public class CommunityController {
     @PostMapping(value = "/add")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @CrossOrigin
-    public ResponseEntity<AddCommunityDTO> AddCommunity(@RequestBody AddCommunityDTO addCommunityDTO, Authentication authentication) throws IOException {
+    public ResponseEntity<AddCommunityDTO> AddCommunity(@RequestBody AddCommunityDTO addCommunityDTO, Authentication authentication) {
         User user = userService.findByUsername(authentication.getName());
         Optional<Community> name = communityService.findFirstByName(addCommunityDTO.getName());
 

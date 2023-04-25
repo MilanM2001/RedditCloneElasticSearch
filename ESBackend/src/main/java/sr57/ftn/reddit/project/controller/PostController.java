@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs.ElasticCommunityResponseDTO;
+import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.ElasticPostDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.ElasticPostResponseDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticFlair;
@@ -26,6 +28,7 @@ import sr57.ftn.reddit.project.model.enums.ReportStatus;
 import sr57.ftn.reddit.project.service.*;
 import sr57.ftn.reddit.project.util.SearchType;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -97,6 +100,14 @@ public class PostController {
     public ResponseEntity<List<ElasticPostResponseDTO>> GetAllByText(@PathVariable String text, @PathVariable String searchType) {
         SearchType search = SearchType.valueOf(searchType);
         List<ElasticPostResponseDTO> elasticPosts = elasticPostService.findAllByText(text, search);
+
+        return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/findAllByPDFDescription/{pdfDescription}/{searchType}")
+    public ResponseEntity<List<ElasticPostResponseDTO>> GetAllByPDFDescription(@PathVariable String pdfDescription, @PathVariable String searchType) {
+        SearchType search = SearchType.valueOf(searchType);
+        List<ElasticPostResponseDTO> elasticPosts = elasticPostService.findAllByPDFDescription(pdfDescription, search);
 
         return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
     }
@@ -193,6 +204,13 @@ public class PostController {
         elasticCommunityService.index(elasticCommunity);
 
         return new ResponseEntity<>(modelMapper.map(newPost, AddPostDTO.class), HttpStatus.CREATED);
+    }
+
+    @PostMapping(path = "/pdf", consumes = {"multipart/form-data"})
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @CrossOrigin
+    public void uploadPDF(@ModelAttribute ElasticPostDTO uploadModel) throws IOException {
+        elasticPostService.indexUploadedFile(uploadModel);
     }
 
     @PostMapping(value = "/addReport/{post_id}")

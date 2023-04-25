@@ -89,7 +89,7 @@ export class CommunitiesComponent implements OnInit {
     let search_option;
     search_option = this.searchOptionFormGroup.get('search_option')?.value;
 
-    if (search_option == 1 || search_option == 2) {
+    if (search_option == 1 || search_option == 2 || search_option == 3) {
       if (this.searchInputFormGroup.invalid) {
         return;
       }
@@ -98,7 +98,7 @@ export class CommunitiesComponent implements OnInit {
       }
     }
 
-    if (search_option == 3 || search_option == 4) {
+    if (search_option == 4 || search_option == 5) {
       if (this.searchNumbersFormGroup.invalid) {
         return;
       }
@@ -158,8 +158,27 @@ export class CommunitiesComponent implements OnInit {
         })
       }
 
-    //Search by Number of Posts
+    //Search by PDF Description
     if (search_option == 3) {
+      this.communityService.GetAllByPDFDescription(search_input, searchType)
+        .subscribe({
+          next: (data: Community[]) => {
+            this.communities = data;
+            if (data.length == 0) {
+              this.no_results == true;
+            }
+            if (data.length > 0) {
+              this.no_results = false;
+            }
+          },
+          error: (error) => {
+            console.log(error);
+          }
+        })
+    }
+
+    //Search by Number of Posts
+    if (search_option == 4) {
       this.communityService.GetAllByNumberOfPosts(from, to)
         .subscribe({
           next: (data: Community[]) => {
@@ -177,7 +196,7 @@ export class CommunitiesComponent implements OnInit {
         })
     }
 
-    if (search_option == 4) {
+    if (search_option == 5) {
       this.communityService.GetAllByAverageKarma(from, to)
         .subscribe({
           next: (data: Community[]) => {
@@ -200,7 +219,7 @@ export class CommunitiesComponent implements OnInit {
   isSearchingText(): boolean {
     let search_option = this.searchOptionFormGroup.get('search_option')?.value;
 
-    if (search_option == 1 || search_option == 2 || search_option == '') {
+    if (search_option == 1 || search_option == 2 || search_option == 3 || search_option == '') {
       return true;
     } else {
       return false
@@ -210,7 +229,7 @@ export class CommunitiesComponent implements OnInit {
   isSearchingNumbers(): boolean {
     let search_option = this.searchOptionFormGroup.get('search_option')?.value;
 
-    if (search_option == 3 || search_option == 4) {
+    if (search_option == 4 || search_option == 5) {
       return true;
     } else {
       return false;

@@ -8,8 +8,6 @@ import java.util.List;
 
 @Repository
 public interface ElasticPostRepository extends ElasticsearchRepository<ElasticPost, Integer> {
-    List<ElasticPost> findAllByTitle(String title);
-    List<ElasticPost> findAllByText(String text);
     List<ElasticPost> findAll();
     List<ElasticPost> findAllByCommunity_Name(String name);
     List<ElasticPost> findAllByFlair_Name(String name);

@@ -35,6 +35,10 @@ export class CommunityService {
         return this.http.get<Community[]>(`${environment.baseApiUrl}/${this.url}/findAllByDescription/` + description + '/' + searchType);
     }
 
+    public GetAllByPDFDescription(pdfDescription: String, searchType: String): Observable<Community[]> {
+        return this.http.get<Community[]>(`${environment.baseApiUrl}/${this.url}/findAllByPDFDescription/` + pdfDescription + '/' + searchType);
+    }
+
     public GetAllByNumberOfPosts(from: String, to: String): Observable<Community[]> {
         return this.http.get<Community[]>(`${environment.baseApiUrl}/${this.url}/numberOfPosts/` + from + `/to/` + to)
     }
