@@ -14,6 +14,13 @@ export class CommunitiesComponent implements OnInit {
     search_input: new FormControl('')
   })
 
+  searchTwoInputsFormGroup: FormGroup = new FormGroup({
+    first: new FormControl(''),
+    second: new FormControl(''),
+    selected_fields: new FormControl(''),
+    boolQueryType: new FormControl('')
+  })
+
   searchNumbersFormGroup: FormGroup = new FormGroup({
     from: new FormControl(''),
     to: new FormControl('')
@@ -28,10 +35,11 @@ export class CommunitiesComponent implements OnInit {
   })
 
   communities: Array<Community> = [];
-  submittedSearch = false;
-  submittedOption = false;
-  submittedType = false;
-  no_results = false;
+  submittedSearch = false
+  submittedTwoSearches = false
+  submittedOption = false
+  submittedType = false
+  no_results = false
 
   constructor(private communityService: CommunityService,
               private formBuilder: FormBuilder) { }
@@ -39,6 +47,13 @@ export class CommunitiesComponent implements OnInit {
   ngOnInit(): void {
     this.searchInputFormGroup = this.formBuilder.group({
       search_input: ['', [Validators.required]]
+    })
+
+    this.searchTwoInputsFormGroup = this.formBuilder.group({
+      first: ['', [Validators.required]],
+      second: ['', [Validators.required]],
+      selected_fields: ['', [Validators.required]],
+      boolQueryType: ['', Validators.required]
     })
 
     this.searchNumbersFormGroup = this.formBuilder.group({
@@ -65,60 +80,83 @@ export class CommunitiesComponent implements OnInit {
       });
   }
 
-  get searchInputGroup(): { [key: string]: AbstractControl} {
-    return this.searchInputFormGroup.controls;
+  get searchInputGroup(): { [key: string]: AbstractControl } {
+    return this.searchInputFormGroup.controls
+  }
+
+  get searchTwoInputsGroup(): { [key: string]: AbstractControl } {
+    return this.searchTwoInputsFormGroup.controls
   }
 
   get searchNumbersGroup(): { [key: string]: AbstractControl } {
-    return this.searchNumbersFormGroup.controls;
+    return this.searchNumbersFormGroup.controls
   }
 
   get searchTypeGroup(): { [key: string]: AbstractControl } {
-    return this.searchTypeFormGroup.controls;
+    return this.searchTypeFormGroup.controls
   }
 
   get searchOptionGroup(): { [key: string]: AbstractControl } {
-    return this.searchOptionFormGroup.controls;
+    return this.searchOptionFormGroup.controls
   }
 
   search() {
-    this.submittedSearch = true;
-    this.submittedOption = true;
-    this.submittedType = true;
+    this.submittedSearch = true
+    this.submittedTwoSearches = true
+    this.submittedOption = true
+    this.submittedType = true
 
     let search_option;
     search_option = this.searchOptionFormGroup.get('search_option')?.value;
 
     if (search_option == 1 || search_option == 2 || search_option == 3) {
       if (this.searchInputFormGroup.invalid) {
-        return;
+        return
       }
       if (this.searchTypeFormGroup.invalid) {
-        return;
+        return
       }
     }
 
     if (search_option == 4 || search_option == 5) {
       if (this.searchNumbersFormGroup.invalid) {
-        return;
+        return
+      }
+    }
+
+    if (search_option == 6) {
+      if (this.searchTwoInputsFormGroup.invalid) {
+        return
       }
     }
 
     if (this.searchOptionFormGroup.invalid) {
-      return;
+      return
     }
 
-    let search_input;
-    search_input = this.searchInputFormGroup.get('search_input')?.value;
+    let search_input
+    search_input = this.searchInputFormGroup.get('search_input')?.value
 
-    let from;
-    from = this.searchNumbersFormGroup.get('from')?.value;
+    let from
+    from = this.searchNumbersFormGroup.get('from')?.value
 
-    let to;
-    to = this.searchNumbersFormGroup.get('to')?.value;
+    let to
+    to = this.searchNumbersFormGroup.get('to')?.value
 
-    let searchType;
-    searchType = this.searchTypeFormGroup.get('search_type')?.value;
+    let searchType
+    searchType = this.searchTypeFormGroup.get('search_type')?.value
+
+    let first
+    first = this.searchTwoInputsFormGroup.get('first')?.value
+
+    let second
+    second = this.searchTwoInputsFormGroup.get('second')?.value
+
+    let selected_fields
+    selected_fields = this.searchTwoInputsFormGroup.get('selected_fields')?.value
+
+    let boolQueryType
+    boolQueryType = this.searchTwoInputsFormGroup.get('boolQueryType')?.value
 
     //Search by Name
     if (search_option == 1) {
@@ -196,6 +234,7 @@ export class CommunitiesComponent implements OnInit {
         })
     }
 
+    //Search by Average Karma
     if (search_option == 5) {
       this.communityService.GetAllByAverageKarma(from, to)
         .subscribe({
@@ -214,12 +253,34 @@ export class CommunitiesComponent implements OnInit {
         })
     }
 
+    if (search_option == 6) {
+      console.log(first)
+      console.log(second)
+      console.log(selected_fields)
+      console.log(boolQueryType)
+      this.communityService.GetAllByTwoFields(first, second, selected_fields, boolQueryType)
+        .subscribe({
+          next: (data: Community[]) => {
+            this.communities = data
+            if (data.length == 0) {
+              this.no_results = true
+            }
+            if (data.length > 0) {
+              this.no_results = false
+            }
+          },
+          error: (error) => {
+            console.log(error)
+          }
+        })
+    }
+
   }
 
   isSearchingText(): boolean {
     let search_option = this.searchOptionFormGroup.get('search_option')?.value;
 
-    if (search_option == 1 || search_option == 2 || search_option == 3 || search_option == '') {
+    if (search_option == 1 || search_option == 2 || search_option == 3) {
       return true;
     } else {
       return false
@@ -227,12 +288,22 @@ export class CommunitiesComponent implements OnInit {
   }
 
   isSearchingNumbers(): boolean {
-    let search_option = this.searchOptionFormGroup.get('search_option')?.value;
+    let search_option = this.searchOptionFormGroup.get('search_option')?.value
 
     if (search_option == 4 || search_option == 5) {
       return true;
     } else {
       return false;
+    }
+  }
+
+  isSearchingTwoTexts(): boolean {
+    let search_option = this.searchOptionFormGroup.get('search_option')?.value
+
+    if (search_option == 6) {
+      return true
+    } else {
+      return false
     }
   }
   

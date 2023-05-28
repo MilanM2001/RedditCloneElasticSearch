@@ -13,6 +13,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddPostDTO implements Serializable {
+    private Integer post_id;
     private String title;
     private String text;
     @Nullable

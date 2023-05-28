@@ -13,15 +13,22 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.SimpleQueryEs;
-import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs.ElasticCommunityResponseDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.ElasticPostDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.ElasticPostResponseDTO;
-import sr57.ftn.reddit.project.elasticmodel.elasticdto.mapper.ElasticCommunityMapper;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.mapper.ElasticPostMapper;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticFlair;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticPost;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticUser;
+import sr57.ftn.reddit.project.elasticrepository.ElasticCommunityRepository;
 import sr57.ftn.reddit.project.elasticrepository.ElasticPostRepository;
 import sr57.ftn.reddit.project.lucene.indexing.handlers.DocumentHandler;
 import sr57.ftn.reddit.project.lucene.indexing.handlers.PDFHandler;
+import sr57.ftn.reddit.project.model.entity.Flair;
+import sr57.ftn.reddit.project.model.entity.User;
+import sr57.ftn.reddit.project.service.FlairService;
+import sr57.ftn.reddit.project.service.PostService;
+import sr57.ftn.reddit.project.service.UserService;
 import sr57.ftn.reddit.project.util.SearchType;
 
 import java.io.File;
@@ -39,11 +46,23 @@ public class ElasticPostService {
 
     private final ElasticPostRepository elasticPostRepository;
     private final ElasticsearchRestTemplate elasticsearchRestTemplate;
+    private final ElasticCommunityService elasticCommunityService;
+    private final UserService userService;
+    private final FlairService flairService;
+    private final PostService postService;
 
     @Autowired
-    public ElasticPostService(ElasticPostRepository elasticPostRepository, ElasticsearchRestTemplate elasticsearchRestTemplate) {
+    public ElasticPostService(ElasticPostRepository elasticPostRepository,
+                              ElasticsearchRestTemplate elasticsearchRestTemplate,
+                              ElasticCommunityService elasticCommunityService,
+                              UserService userService,
+                              FlairService flairService, PostService postService) {
         this.elasticPostRepository = elasticPostRepository;
         this.elasticsearchRestTemplate = elasticsearchRestTemplate;
+        this.elasticCommunityService = elasticCommunityService;
+        this.userService = userService;
+        this.flairService = flairService;
+        this.postService = postService;
     }
 
     public void index(ElasticPost elasticPost) {
@@ -63,12 +82,42 @@ public class ElasticPostService {
                     postIndexUnit.setPost_id(elasticPostDTO.getPost_id());
                     postIndexUnit.setTitle(elasticPostDTO.getTitle());
                     postIndexUnit.setText(elasticPostDTO.getText());
-                    postIndexUnit.setKarma(0);
+                    postIndexUnit.setKarma(1);
                     postIndexUnit.setNumberOfComments(0);
-                    postIndexUnit.setUser(null); //Has to be set by ID
-                    postIndexUnit.setCommunity(null);
-                    postIndexUnit.setFlair(null);
+
+                    User user = userService.findOne(elasticPostDTO.getUser_id());
+
+                    ElasticUser elasticUser = new ElasticUser();
+                    elasticUser.setUsername(user.getUsername());
+                    postIndexUnit.setUser(elasticUser);
+
+                    ElasticCommunity community = elasticCommunityService.findByCommunityId(elasticPostDTO.getCommunity_id());
+                    postIndexUnit.setCommunity(community);
+
+                    if (elasticPostDTO.getFlair_id() != 0) {
+                        Flair flair = flairService.findOne(elasticPostDTO.getFlair_id());
+
+                        ElasticFlair elasticFlair = new ElasticFlair();
+                        elasticFlair.setFlair_id(flair.getFlair_id());
+                        elasticFlair.setName(flair.getName());
+
+                        postIndexUnit.setFlair(elasticFlair);
+                    }
+
                     index(postIndexUnit);
+
+                    Integer numberOfPosts = postService.countPostsByCommunityId(elasticPostDTO.getCommunity_id());
+                    List<ElasticPost> elasticPosts = findAllByCommunityName(community.getName());
+                    double totalKarma = 0.0;
+                    for (ElasticPost eachElasticPost: elasticPosts) {
+                        totalKarma += eachElasticPost.getKarma();
+                    }
+
+                    Double averageKarmaOfCommunity = totalKarma/numberOfPosts;
+
+                    community.setNumberOfPosts(numberOfPosts);
+                    community.setAverageKarma(averageKarmaOfCommunity);
+                    elasticCommunityService.index(community);
                 }
             }
         } else {

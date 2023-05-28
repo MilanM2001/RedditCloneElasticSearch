@@ -110,9 +110,9 @@ public class CommunityController {
         return new ResponseEntity<>(elasticCommunities, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/findAllByNameAndDescription/{name}/{description}")
-    public ResponseEntity<List<ElasticCommunityResponseDTO>> GetAllByNameAndDescription(@PathVariable String name, @PathVariable String description) {
-        List<ElasticCommunityResponseDTO> elasticCommunities = elasticCommunityService.findAllByNameAndDescription(name, description);
+    @GetMapping(value = "/findAllByTwoFields/{first}/{second}/{selectedFields}/{boolQueryType}")
+    public ResponseEntity<List<ElasticCommunityResponseDTO>> GetAllByTwoFields(@PathVariable String first, @PathVariable String second, @PathVariable Integer selectedFields, @PathVariable String boolQueryType) {
+        List<ElasticCommunityResponseDTO> elasticCommunities = elasticCommunityService.findAllByTwoFields(first, second, selectedFields, boolQueryType);
 
         return new ResponseEntity<>(elasticCommunities, HttpStatus.OK);
     }
@@ -166,11 +166,11 @@ public class CommunityController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @CrossOrigin
     public ResponseEntity<AddCommunityDTO> AddCommunity(@RequestBody AddCommunityDTO addCommunityDTO, Authentication authentication) {
-        User user = userService.findByUsername(authentication.getName());
+//        User user = userService.findByUsername(authentication.getName());
         Optional<Community> name = communityService.findFirstByName(addCommunityDTO.getName());
 
         if (name.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
 
         Community newCommunity = modelMapper.map(addCommunityDTO, Community.class);

@@ -29,6 +29,7 @@
                             </mat-option>
                         </mat-select>
                     </div>
+                    
 
                     <div class="mb-3 w-50">
                         <mat-card-title class="card-title">Text</mat-card-title>
@@ -40,6 +41,16 @@
                             <div *ngIf="f['text'].errors['minlength']">Text must be at least 5 characters long.</div>
                             <div *ngIf="f['text'].errors['maxlength']">Title must not exceed 300 characters.</div>
                         </div>
+
+                        <div class="upload-file">
+                            <body>
+                                <div class="col-md-10 offset-md-1">
+                                    <label for="files" class="form-label">Upload file (optional)&nbsp;</label>
+                                    <input type="file" class="file-upload" (change)="setEvent($event)" id="files">
+                                </div>
+                            </body>
+                        </div>
+                        
                         <div class="form-group form-check">
                             <button type="submit" class="btn btn-primary" (click)="onSubmit()">Add Post</button>
                         </div>

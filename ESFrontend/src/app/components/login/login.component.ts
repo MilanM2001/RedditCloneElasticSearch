@@ -21,7 +21,8 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder
   ) { }
 
-  submitted = false;
+  submitted = false
+  doesExist = false
 
   ngOnInit(): void {
     this.formGroup = this.formBuilder.group({
@@ -51,6 +52,12 @@ export class LoginComponent implements OnInit {
         next: (token: string) => {
           localStorage.setItem('authToken', token);
           this.router.navigateByUrl("/Communities");
+        },
+        error: (error) => {
+          console.log(error)
+          if (error.status == 403) {
+            this.doesExist = true
+          }
         }
       })
 

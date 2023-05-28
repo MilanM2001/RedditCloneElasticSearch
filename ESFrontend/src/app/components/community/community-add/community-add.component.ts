@@ -34,9 +34,10 @@ export class CommunityAddComponent implements OnInit {
               private formBuilder: FormBuilder,
               private router: Router) { }
 
-  submittedCommunity = false;
-  submittedRule = false;
-  submittedFlair = false;
+  submittedCommunity = false
+  submittedRule = false
+  submittedFlair = false
+  doesExist = false
 
   ngOnInit(): void {
     this.communityFormGroup = this.formBuilder.group({
@@ -116,7 +117,10 @@ export class CommunityAddComponent implements OnInit {
           newCommunity_id = data.community_id;
         },
         error: (error) => {
-          console.log(error);
+          console.log(error)
+          if (error.status = 409) {
+            this.doesExist = true
+          }
         }, complete: () => {
 
           if (this.event != undefined) {
@@ -165,5 +169,4 @@ export class CommunityAddComponent implements OnInit {
   }
 
   event: any;
-
 }

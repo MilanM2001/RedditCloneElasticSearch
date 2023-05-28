@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ElasticCommunityService {
@@ -140,16 +141,92 @@ public class ElasticCommunityService {
         return ElasticCommunityMapper.mapDtos(searchBoolQuery(boolQueryPDFDescription));
     }
 
-    public List<ElasticCommunityResponseDTO> findAllByNameAndDescription(String name, String description) {
-        QueryBuilder nameQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("name", name));
-        QueryBuilder descriptionQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("description", description));
+    public List<ElasticCommunityResponseDTO> findAllByTwoFields(String first, String second, Integer selectedFields, String boolQueryType) {
+        //Name and Description -OR-
+        if (selectedFields == 1 && Objects.equals(boolQueryType, "OR")) {
+            QueryBuilder nameQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("name", first));
+            QueryBuilder descriptionQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("description", second));
 
-        BoolQueryBuilder boolQueryNameAndDescription = QueryBuilders
-                .boolQuery()
-                .should(nameQuery)
-                .should(descriptionQuery);
+            BoolQueryBuilder boolQueryNameAndDescription = QueryBuilders
+                    .boolQuery()
+                    .should(nameQuery)
+                    .should(descriptionQuery);
 
-        return ElasticCommunityMapper.mapDtos(searchBoolQuery(boolQueryNameAndDescription));
+            return ElasticCommunityMapper.mapDtos(searchBoolQuery(boolQueryNameAndDescription));
+        }
+
+        //Name and Description -AND-
+        if (selectedFields == 1 && Objects.equals(boolQueryType, "AND")) {
+            QueryBuilder nameQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("name", first));
+            QueryBuilder descriptionQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("description", second));
+
+            BoolQueryBuilder boolQueryNameAndDescription = QueryBuilders
+                    .boolQuery()
+                    .must(nameQuery)
+                    .must(descriptionQuery);
+
+            return ElasticCommunityMapper.mapDtos(searchBoolQuery(boolQueryNameAndDescription));
+        }
+
+
+
+        //Name and PDF Description -OR-
+        if (selectedFields == 2 && Objects.equals(boolQueryType, "OR")) {
+            QueryBuilder nameQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("name", first));
+            QueryBuilder pdfDescriptionQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("pdfDescription", second));
+
+            BoolQueryBuilder boolQueryNameAndDescription = QueryBuilders
+                    .boolQuery()
+                    .should(nameQuery)
+                    .should(pdfDescriptionQuery);
+
+            return ElasticCommunityMapper.mapDtos(searchBoolQuery(boolQueryNameAndDescription));
+        }
+
+        //Name and PDF Description -AND-
+        if (selectedFields == 2 && Objects.equals(boolQueryType, "AND")) {
+            QueryBuilder nameQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("name", first));
+            QueryBuilder pdfDescriptionQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("pdfDescription", second));
+
+            BoolQueryBuilder boolQueryNameAndDescription = QueryBuilders
+                    .boolQuery()
+                    .must(nameQuery)
+                    .must(pdfDescriptionQuery);
+
+            return ElasticCommunityMapper.mapDtos(searchBoolQuery(boolQueryNameAndDescription));
+        }
+
+
+
+        //Description and PDF Description -OR-
+        if (selectedFields == 3 && Objects.equals(boolQueryType, "OR")) {
+            QueryBuilder descriptionQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("description", first));
+            QueryBuilder pdfDescriptionQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("pdfDescription", second));
+
+            BoolQueryBuilder boolQueryNameAndDescription = QueryBuilders
+                    .boolQuery()
+                    .should(descriptionQuery)
+                    .should(pdfDescriptionQuery);
+
+            return ElasticCommunityMapper.mapDtos(searchBoolQuery(boolQueryNameAndDescription));
+        }
+
+        //Description and PDF Description -AND-
+        if (selectedFields == 3 && Objects.equals(boolQueryType, "AND")) {
+            QueryBuilder descriptionQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("description", first));
+            QueryBuilder pdfDescriptionQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("pdfDescription", second));
+
+            BoolQueryBuilder boolQueryNameAndDescription = QueryBuilders
+                    .boolQuery()
+                    .must(descriptionQuery)
+                    .must(pdfDescriptionQuery);
+
+            return ElasticCommunityMapper.mapDtos(searchBoolQuery(boolQueryNameAndDescription));
+        }
+
+        else {
+            return null;
+        }
     }
 
     public List<ElasticCommunityResponseDTO> findByNumberOfPosts(double from, double to) {

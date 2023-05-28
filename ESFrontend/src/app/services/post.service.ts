@@ -53,6 +53,10 @@ export class PostService {
     return this.http.post<Post>(`${environment.baseApiUrl}/${this.url}/add/` + community_id, postDTO);
   }
 
+  public AddElasticPDF(uploadModel: FormData): Observable<Post> {
+    return this.http.post<Post>(`${environment.baseApiUrl}/${this.url}/pdf`, uploadModel);
+}
+
   public Update(post_id: number, post: Post) {
     return this.http.put(`${environment.baseApiUrl}/${this.url}/update/` + post_id, post);
   }

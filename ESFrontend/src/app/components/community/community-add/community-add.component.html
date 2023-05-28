@@ -14,6 +14,10 @@
                                 <div *ngIf="communityGroup['name'].errors['minlength']">Name must be at least 3 characters long.</div>
                                 <div *ngIf="communityGroup['name'].errors['maxlength']">Name must not exceed 20 characters.</div>
                             </div>
+
+                            <div *ngIf="doesExist">
+                                <h3 class="does-exist">Name already Exists</h3>
+                            </div>
                     </div>
 
                     <div class="mb-3 w-50">

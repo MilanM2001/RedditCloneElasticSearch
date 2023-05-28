@@ -80,7 +80,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/communities/findAllByName/{name}/{searchType}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/findAllByDescription/{description}/{searchType}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/findAllByPDFDescription/{pdfDescription}/{searchType}").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/communities/findAllByNameAndDescription/{name}/{description}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/communities/findAllByTwoFields/{first}/{second}/{selectedFields}/{boolQueryType}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/numberOfPosts/{from}/to/{to}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/averageKarma/{from}/to/{to}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/communities/posts/{community_id}").permitAll()

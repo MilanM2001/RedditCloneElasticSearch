@@ -7,6 +7,7 @@ import { Flair } from 'src/app/model/flair.model';
 import { Post } from 'src/app/model/post.model';
 import { CommunityService } from 'src/app/services/community.service';
 import { PostService } from 'src/app/services/post.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-post-add',
@@ -19,7 +20,8 @@ export class PostAddComponent implements OnInit {
               private postService: PostService,
               private route: ActivatedRoute,
               private router: Router,
-              private formBuilder: FormBuilder) 
+              private formBuilder: FormBuilder,
+              private userService: UserService) 
   { }
 
   formGroup: FormGroup = new FormGroup({
@@ -30,6 +32,7 @@ export class PostAddComponent implements OnInit {
 
   community: Community = new Community();
   community_id = Number(this.route.snapshot.paramMap.get('community_id'))
+  myUserId: number = 0;
   flairs: Flair[] =  [];
   
   submitted = false;
@@ -54,6 +57,14 @@ export class PostAddComponent implements OnInit {
         }
       })
 
+    this.userService.GetMe()
+      .subscribe({
+        next: (data) => {
+          this.myUserId = data.user_id
+          console.log(this.myUserId)
+        }
+      })
+
       this.formGroup = this.formBuilder.group({
         title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(35)]],
         text: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(300)]],
@@ -73,6 +84,8 @@ export class PostAddComponent implements OnInit {
     }
 
     let addPost: AddPostDTO = new AddPostDTO();
+    let uploadModel: FormData = new FormData();
+    let newPost_id: number;
 
     addPost.title = this.formGroup.get('title')?.value;
     addPost.text = this.formGroup.get('text')?.value;
@@ -80,14 +93,43 @@ export class PostAddComponent implements OnInit {
 
     this.postService.AddPost(this.community_id, addPost)
       .subscribe({
-        next: (data: Post) => {
-          console.log(data);
-          history.back();
+        next: (data) => {
+          newPost_id = data.post_id
         },
         error: (error) => {
-          console.log(error);
+          console.log(error)
+        },
+        complete: () => {
+
+          if (this.event != undefined) {
+            const file: File = this.event.target.files[0]
+            uploadModel.append("post_id", String(newPost_id))
+            uploadModel.append("title", addPost.title)
+            uploadModel.append("text", addPost.text)
+            uploadModel.append("files", file)
+            uploadModel.append("community_id", String(this.community_id))
+            uploadModel.append("user_id", String(this.myUserId))
+            uploadModel.append("flair_id", String(addPost.flair_id))
+
+            this.postService.AddElasticPDF(uploadModel)
+              .subscribe({
+                next: (data) => {
+                  console.log("ADDED WITH PDF")
+                  this.router.navigateByUrl("/Main-Page")
+                },
+                error: (error) => {
+                  console.log(error)
+                }
+              })
+          }
         }
-      });
+      })
   }
 
+  setEvent(event: any) {
+    this.event = event;
+    console.log(this.event)
+  }
+
+  event: any;
 }

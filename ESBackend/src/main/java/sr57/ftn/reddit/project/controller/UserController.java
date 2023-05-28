@@ -1,5 +1,6 @@
 package sr57.ftn.reddit.project.controller;
 
+import co.elastic.clients.elasticsearch.nodes.Http;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,9 +124,8 @@ public class UserController {
 
         UserDetails user = (UserDetails) authentication.getPrincipal();
         String jwt = tokenUtils.generateToken(user);
-        int expiresIn = tokenUtils.getExpiredIn();
 
-        return ResponseEntity.ok(jwt);
+        return new ResponseEntity<>(jwt, HttpStatus.OK);
     }
 
     @PutMapping(value = "/updatePassword/{user_id}")

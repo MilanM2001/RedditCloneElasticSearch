@@ -146,11 +146,12 @@ public class PostController {
     @CrossOrigin
     public ResponseEntity<AddPostDTO> AddPost(@RequestBody AddPostDTO addPostDTO, @PathVariable("community_id") Integer community_id, Authentication authentication) {
         User user = userService.findByUsername(authentication.getName());
-        ElasticUser elasticUser = new ElasticUser();
-        elasticUser.setUsername(user.getUsername());
+
+//        ElasticUser elasticUser = new ElasticUser();
+//        elasticUser.setUsername(user.getUsername());
 
         Community community = communityService.findOne(community_id);
-        ElasticCommunity elasticCommunity = elasticCommunityService.findByCommunityId(community_id);
+//        ElasticCommunity elasticCommunity = elasticCommunityService.findByCommunityId(community_id);
 
         Post newPost = new Post();
         newPost.setTitle(addPostDTO.getTitle());
@@ -162,7 +163,7 @@ public class PostController {
         if (addPostDTO.getFlair_id() != 0) {
             newPost.setFlair(flairService.findOne(addPostDTO.getFlair_id()));
         }
-        newPost = postService.save(newPost);
+        postService.save(newPost);
 
         Reaction newReaction = new Reaction();
         newReaction.setUser(user);
@@ -172,36 +173,36 @@ public class PostController {
         newReaction.setPost(newPost);
         reactionService.save(newReaction);
 
-        ElasticPost elasticPost = new ElasticPost();
-        elasticPost.setPost_id(newPost.getPost_id());
-        elasticPost.setTitle(addPostDTO.getTitle());
-        elasticPost.setText(addPostDTO.getText());
-        elasticPost.setKarma(1);
-        elasticPost.setNumberOfComments(0);
-        elasticPost.setUser(elasticUser);
-        elasticPost.setCommunity(elasticCommunity);
-        if (addPostDTO.getFlair_id() != 0) {
-            Flair foundFlair = flairService.findOne(addPostDTO.getFlair_id());
-            ElasticFlair elasticFlair= new ElasticFlair();
+//        ElasticPost elasticPost = new ElasticPost();
+//        elasticPost.setPost_id(newPost.getPost_id());
+//        elasticPost.setTitle(addPostDTO.getTitle());
+//        elasticPost.setText(addPostDTO.getText());
+//        elasticPost.setKarma(1);
+//        elasticPost.setNumberOfComments(0);
+//        elasticPost.setUser(elasticUser);
+//        elasticPost.setCommunity(elasticCommunity);
+//        if (addPostDTO.getFlair_id() != 0) {
+//            Flair foundFlair = flairService.findOne(addPostDTO.getFlair_id());
+//            ElasticFlair elasticFlair= new ElasticFlair();
+//
+//            elasticFlair.setFlair_id(foundFlair.getFlair_id());
+//            elasticFlair.setName(foundFlair.getName());
+//            elasticPost.setFlair(elasticFlair);
+//        }
+//        elasticPostService.index(elasticPost);
 
-            elasticFlair.setFlair_id(foundFlair.getFlair_id());
-            elasticFlair.setName(foundFlair.getName());
-            elasticPost.setFlair(elasticFlair);
-        }
-        elasticPostService.index(elasticPost);
-
-        Integer numberOfPosts = postService.countPostsByCommunityId(community_id);
-        List<ElasticPost> elasticPosts = elasticPostService.findAllByCommunityName(elasticCommunity.getName());
-        double totalKarma = 0.0;
-        for (ElasticPost eachElasticPost: elasticPosts) {
-            totalKarma += eachElasticPost.getKarma();
-        }
-
-        Double averageKarmaOfCommunity = totalKarma/numberOfPosts;
-
-        elasticCommunity.setNumberOfPosts(numberOfPosts);
-        elasticCommunity.setAverageKarma(averageKarmaOfCommunity);
-        elasticCommunityService.index(elasticCommunity);
+//        Integer numberOfPosts = postService.countPostsByCommunityId(community_id);
+//        List<ElasticPost> elasticPosts = elasticPostService.findAllByCommunityName(elasticCommunity.getName());
+//        double totalKarma = 0.0;
+//        for (ElasticPost eachElasticPost: elasticPosts) {
+//            totalKarma += eachElasticPost.getKarma();
+//        }
+//
+//        Double averageKarmaOfCommunity = totalKarma/numberOfPosts;
+//
+//        elasticCommunity.setNumberOfPosts(numberOfPosts);
+//        elasticCommunity.setAverageKarma(averageKarmaOfCommunity);
+//        elasticCommunityService.index(elasticCommunity);
 
         return new ResponseEntity<>(modelMapper.map(newPost, AddPostDTO.class), HttpStatus.CREATED);
     }

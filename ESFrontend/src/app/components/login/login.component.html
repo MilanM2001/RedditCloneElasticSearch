@@ -30,6 +30,10 @@
                             <div *ngIf="loginGroup['password'].errors['maxlength']">Password must not exceed 20
                                 characters.</div>
                         </div>
+
+                        <div *ngIf="doesExist" class="does-exist">
+                            <h3>Incorrect Username or Password</h3>
+                        </div>
                         <button (click)="onSubmit()" class="btn btn-primary">Login</button>
                     </div>
 

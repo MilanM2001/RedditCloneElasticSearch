@@ -11,4 +11,7 @@ public class ElasticPostDTO {
     private String title;
     private String text;
     private MultipartFile[] files;
+    private Integer community_id;
+    private Integer user_id;
+    private Integer flair_id;
 }
