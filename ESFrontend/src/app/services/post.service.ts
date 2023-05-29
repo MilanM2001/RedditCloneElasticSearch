@@ -33,6 +33,14 @@ export class PostService {
     return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/findAllByText/` + text + '/' + searchType);
   }
 
+  public GetAllByPDFDescription(pdfDescription: String, searchType: String): Observable<Post[]> {
+    return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/findAllByPDFDescription/` + pdfDescription + '/' + searchType);
+  }
+
+  public GetAllByTwoFields(first: String, second: String, selected_fields: number, boolQueryType: String): Observable<Post[]> {
+    return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/findAllByTwoFields/` + first + '/' + second + '/' + selected_fields + '/' + boolQueryType);
+  }
+
   public GetAllByKarma(from: String, to: String): Observable<Post[]> {
     return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/karma/` + from + `/to/` + to);
   }

@@ -12,9 +12,7 @@ import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs.Elas
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.ElasticPostDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.ElasticPostResponseDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
-import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticFlair;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticPost;
-import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticUser;
 import sr57.ftn.reddit.project.elasticservice.ElasticCommunityService;
 import sr57.ftn.reddit.project.elasticservice.ElasticPostService;
 import sr57.ftn.reddit.project.model.dto.commentDTOs.CommentDTO;
@@ -112,6 +110,13 @@ public class PostController {
         return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
     }
 
+    @GetMapping(value = "findAllByTwoFields/{first}/{second}/{selectedFields}/{boolQueryType}")
+    public ResponseEntity<List<ElasticPostResponseDTO>> GetAllByTwoFields(@PathVariable String first, @PathVariable String second, @PathVariable Integer selectedFields, @PathVariable String boolQueryType) {
+        List<ElasticPostResponseDTO> elasticPosts = elasticPostService.findAllByTwoFields(first, second, selectedFields, boolQueryType);
+
+        return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
+    }
+
     @GetMapping(value = "findAllByFlairName/{name}")
     public ResponseEntity<List<ElasticPost>> GetAllByFlairName(@PathVariable String name) {
         List<ElasticPost> elasticPosts = elasticPostService.findAllByFlairName(name);
@@ -147,11 +152,7 @@ public class PostController {
     public ResponseEntity<AddPostDTO> AddPost(@RequestBody AddPostDTO addPostDTO, @PathVariable("community_id") Integer community_id, Authentication authentication) {
         User user = userService.findByUsername(authentication.getName());
 
-//        ElasticUser elasticUser = new ElasticUser();
-//        elasticUser.setUsername(user.getUsername());
-
         Community community = communityService.findOne(community_id);
-//        ElasticCommunity elasticCommunity = elasticCommunityService.findByCommunityId(community_id);
 
         Post newPost = new Post();
         newPost.setTitle(addPostDTO.getTitle());
@@ -172,37 +173,6 @@ public class PostController {
         newReaction.setReaction_type(ReactionType.UPVOTE);
         newReaction.setPost(newPost);
         reactionService.save(newReaction);
-
-//        ElasticPost elasticPost = new ElasticPost();
-//        elasticPost.setPost_id(newPost.getPost_id());
-//        elasticPost.setTitle(addPostDTO.getTitle());
-//        elasticPost.setText(addPostDTO.getText());
-//        elasticPost.setKarma(1);
-//        elasticPost.setNumberOfComments(0);
-//        elasticPost.setUser(elasticUser);
-//        elasticPost.setCommunity(elasticCommunity);
-//        if (addPostDTO.getFlair_id() != 0) {
-//            Flair foundFlair = flairService.findOne(addPostDTO.getFlair_id());
-//            ElasticFlair elasticFlair= new ElasticFlair();
-//
-//            elasticFlair.setFlair_id(foundFlair.getFlair_id());
-//            elasticFlair.setName(foundFlair.getName());
-//            elasticPost.setFlair(elasticFlair);
-//        }
-//        elasticPostService.index(elasticPost);
-
-//        Integer numberOfPosts = postService.countPostsByCommunityId(community_id);
-//        List<ElasticPost> elasticPosts = elasticPostService.findAllByCommunityName(elasticCommunity.getName());
-//        double totalKarma = 0.0;
-//        for (ElasticPost eachElasticPost: elasticPosts) {
-//            totalKarma += eachElasticPost.getKarma();
-//        }
-//
-//        Double averageKarmaOfCommunity = totalKarma/numberOfPosts;
-//
-//        elasticCommunity.setNumberOfPosts(numberOfPosts);
-//        elasticCommunity.setAverageKarma(averageKarmaOfCommunity);
-//        elasticCommunityService.index(elasticCommunity);
 
         return new ResponseEntity<>(modelMapper.map(newPost, AddPostDTO.class), HttpStatus.CREATED);
     }
@@ -290,10 +260,14 @@ public class PostController {
             totalKarma += eachElasticPost.getKarma();
         }
 
-        Double averageKarmaOfCommunity = totalKarma/numberOfPosts;
+        if (numberOfPosts != 0) {
+            Double averageKarmaOfCommunity = totalKarma / numberOfPosts;
+            elasticCommunity.setAverageKarma(averageKarmaOfCommunity);
+        } else {
+            elasticCommunity.setAverageKarma(0.0);
+        }
 
         elasticCommunity.setNumberOfPosts(numberOfPosts);
-        elasticCommunity.setAverageKarma(averageKarmaOfCommunity);
         elasticCommunityService.index(elasticCommunity);
 
         return new ResponseEntity<>(HttpStatus.OK);

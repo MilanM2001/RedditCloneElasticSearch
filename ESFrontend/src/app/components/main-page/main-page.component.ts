@@ -12,16 +12,23 @@ import { PostService } from 'src/app/services/post.service';
 })
 export class MainPageComponent implements OnInit {
 
-  searchFormInputGroup: FormGroup = new FormGroup({
+  searchInputFormGroup: FormGroup = new FormGroup({
     search_input: new FormControl('')
   })
 
-  searchFormNumbersGroup: FormGroup = new FormGroup({
+  searchTwoInputsFormGroup: FormGroup = new FormGroup({
+    first: new FormControl(''),
+    second: new FormControl(''),
+    selected_fields: new FormControl(''),
+    boolQueryType: new FormControl('')
+  })
+
+  searchNumbersFormGroup: FormGroup = new FormGroup({
     from: new FormControl(''),
     to: new FormControl('')
   })
 
-  searchFormFlairGroup: FormGroup = new FormGroup({
+  searchFlairFormGroup: FormGroup = new FormGroup({
     flair: new FormControl('')
   })
 
@@ -36,6 +43,7 @@ export class MainPageComponent implements OnInit {
   posts: Array<Post> = [];
   flairs: Array<Flair> = [];
   submittedSearch = false;
+  submittedTwoSearches = false
   submittedOption = false;
   submittedType = false;
   no_results = false;
@@ -45,16 +53,23 @@ export class MainPageComponent implements OnInit {
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
-    this.searchFormInputGroup = this.formBuilder.group({
+    this.searchInputFormGroup = this.formBuilder.group({
       search_input: ['', [Validators.required]]
     })
 
-    this.searchFormNumbersGroup = this.formBuilder.group({
+    this.searchTwoInputsFormGroup = this.formBuilder.group({
+      first: ['', [Validators.required]],
+      second: ['', [Validators.required]],
+      selected_fields: ['', [Validators.required]],
+      boolQueryType: ['', Validators.required]
+    })
+
+    this.searchNumbersFormGroup = this.formBuilder.group({
       from: ['', [Validators.required, Validators.min(0), Validators.max(1000)]],
       to: ['', [Validators.required, Validators.min(0), Validators.max(1000)]]
     })
 
-    this.searchFormFlairGroup = this.formBuilder.group({
+    this.searchFlairFormGroup = this.formBuilder.group({
       flair: ['', [Validators.required]]
     })
 
@@ -88,15 +103,19 @@ export class MainPageComponent implements OnInit {
   }
 
   get searchInputGroup(): { [key: string]: AbstractControl } {
-    return this.searchFormInputGroup.controls;
+    return this.searchInputFormGroup.controls;
+  }
+
+  get searchTwoInputsGroup(): { [key: string]: AbstractControl } {
+    return this.searchTwoInputsFormGroup.controls
   }
 
   get searchNumbersGroup(): { [key: string]: AbstractControl } {
-    return this.searchFormNumbersGroup.controls;
+    return this.searchNumbersFormGroup.controls;
   }
 
   get searchFlairGroup(): { [key: string]: AbstractControl } {
-    return this.searchFormFlairGroup.controls;
+    return this.searchFlairFormGroup.controls;
   }
 
   get searchTypeGroup(): { [key: string]: AbstractControl } {
@@ -108,15 +127,16 @@ export class MainPageComponent implements OnInit {
   }
 
   search() {
-    this.submittedSearch = true;
-    this.submittedOption = true;
-    this.submittedType = true;
+    this.submittedSearch = true
+    this.submittedOption = true
+    this.submittedType = true
+    this.submittedTwoSearches = true
 
     let search_option;
     search_option = this.optionFormGroup.get('search_option')?.value;
 
-    if (search_option == 1 || search_option == 2) {
-      if (this.searchFormInputGroup.invalid) {
+    if (search_option == 1 || search_option == 2 || search_option == 3) {
+      if (this.searchInputFormGroup.invalid) {
         return;
       }
       if (this.searchTypeFormGroup.invalid) {
@@ -124,15 +144,21 @@ export class MainPageComponent implements OnInit {
       }
     }
 
-    if (search_option == 3 || search_option == 5) {
-      if (this.searchFormNumbersGroup.invalid) {
+    if (search_option == 4 || search_option == 5) {
+      if (this.searchNumbersFormGroup.invalid) {
         return;
       }
     }
 
-    if (search_option == 4) {
-      if (this.searchFormFlairGroup.invalid) {
+    if (search_option == 6) {
+      if (this.searchFlairFormGroup.invalid) {
         return;
+      }
+    }
+
+    if (search_option == 7) {
+      if (this.searchTwoInputsFormGroup.invalid) {
+        return
       }
     }
 
@@ -141,19 +167,31 @@ export class MainPageComponent implements OnInit {
     }
 
     let search_input;
-    search_input = this.searchFormInputGroup.get('search_input')?.value;
+    search_input = this.searchInputFormGroup.get('search_input')?.value;
 
     let from;
-    from = this.searchFormNumbersGroup.get('from')?.value;
+    from = this.searchNumbersFormGroup.get('from')?.value;
 
     let to;
-    to = this.searchFormNumbersGroup.get('to')?.value;
+    to = this.searchNumbersFormGroup.get('to')?.value;
 
     let flair;
-    flair = this.searchFormFlairGroup.get('flair')?.value;
+    flair = this.searchFlairFormGroup.get('flair')?.value;
 
     let searchType;
     searchType = this.searchTypeFormGroup.get('search_type')?.value;
+
+    let first
+    first = this.searchTwoInputsFormGroup.get('first')?.value
+
+    let second
+    second = this.searchTwoInputsFormGroup.get('second')?.value
+
+    let selected_fields
+    selected_fields = this.searchTwoInputsFormGroup.get('selected_fields')?.value
+
+    let boolQueryType
+    boolQueryType = this.searchTwoInputsFormGroup.get('boolQueryType')?.value
 
     //Search by Title
     if (search_option == 1) {
@@ -193,9 +231,9 @@ export class MainPageComponent implements OnInit {
         })
     }
 
-    //Search by Number of Posts
+    //Search by PDF Description
     if (search_option == 3) {
-      this.postService.GetAllByKarma(from, to)
+      this.postService.GetAllByPDFDescription(search_input, searchType)
         .subscribe({
           next: (data: Post[]) => {
             this.posts = data;
@@ -207,14 +245,14 @@ export class MainPageComponent implements OnInit {
             }
           },
           error: (error) => {
-            console.log(error);
+            console.log(error)
           }
         })
     }
 
-    //Search by Flair
+    //Search by Number of Posts
     if (search_option == 4) {
-      this.postService.GetAllByFlairName(flair)
+      this.postService.GetAllByKarma(from, to)
         .subscribe({
           next: (data: Post[]) => {
             this.posts = data;
@@ -250,12 +288,54 @@ export class MainPageComponent implements OnInit {
         })
     }
 
-  }
+    //Search by Flair
+    if (search_option == 6) {
+      this.postService.GetAllByFlairName(flair)
+        .subscribe({
+          next: (data: Post[]) => {
+            this.posts = data;
+            if (data.length == 0) {
+              this.no_results = true;
+            }
+            if (data.length > 0) {
+              this.no_results = false;
+            }
+          },
+          error: (error) => {
+            console.log(error);
+          }
+        })
+    }
 
+    //Search by two fields
+    if (search_option == 7) {
+      console.log(first)
+      console.log(second)
+      console.log(selected_fields)
+      console.log(boolQueryType)
+      this.postService.GetAllByTwoFields(first, second, selected_fields, boolQueryType)
+        .subscribe({
+          next: (data: Post[]) => {
+            this.posts = data
+            if (data.length == 0) {
+              this.no_results = true
+            }
+            if (data.length > 0) {
+              this.no_results = false
+            }
+          },
+          error: (error) => {
+            console.log(error)
+          }
+        })
+    }
+
+  }
+  
   isSearchingText(): boolean {
     let search_option = this.optionFormGroup.get('search_option')?.value;
 
-    if (search_option == 1 || search_option == 2 || search_option == '') {
+    if (search_option == 1 || search_option == 2 || search_option == 3) {
       return true;
     } else {
       return false
@@ -265,7 +345,7 @@ export class MainPageComponent implements OnInit {
   isSearchingNumbers(): boolean {
     let search_option = this.optionFormGroup.get('search_option')?.value;
 
-    if (search_option == 3 || search_option == 5) {
+    if (search_option == 4 || search_option == 5) {
       return true;
     } else {
       return false;
@@ -275,10 +355,20 @@ export class MainPageComponent implements OnInit {
   isSearchingFlair(): boolean {
     let search_option = this.optionFormGroup.get('search_option')?.value;
 
-    if (search_option == 4) {
+    if (search_option == 6) {
       return true;
     } else {
       return false;
+    }
+  }
+
+  isSearchingTwoTexts(): boolean {
+    let search_option = this.optionFormGroup.get('search_option')?.value
+
+    if (search_option == 7) {
+      return true
+    } else {
+      return false
     }
   }
 

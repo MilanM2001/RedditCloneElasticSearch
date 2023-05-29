@@ -13,14 +13,15 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.SimpleQueryEs;
+import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs.ElasticCommunityResponseDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.ElasticPostDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.ElasticPostResponseDTO;
+import sr57.ftn.reddit.project.elasticmodel.elasticdto.mapper.ElasticCommunityMapper;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.mapper.ElasticPostMapper;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticFlair;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticPost;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticUser;
-import sr57.ftn.reddit.project.elasticrepository.ElasticCommunityRepository;
 import sr57.ftn.reddit.project.elasticrepository.ElasticPostRepository;
 import sr57.ftn.reddit.project.lucene.indexing.handlers.DocumentHandler;
 import sr57.ftn.reddit.project.lucene.indexing.handlers.PDFHandler;
@@ -37,6 +38,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ElasticPostService {
@@ -125,12 +127,44 @@ public class ElasticPostService {
             postIndexUnit.setPost_id(elasticPostDTO.getPost_id());
             postIndexUnit.setTitle(elasticPostDTO.getTitle());
             postIndexUnit.setText(elasticPostDTO.getText());
-            postIndexUnit.setKarma(0);
+            postIndexUnit.setKarma(1);
             postIndexUnit.setNumberOfComments(0);
-            postIndexUnit.setUser(null);
-            postIndexUnit.setCommunity(null);
-            postIndexUnit.setFlair(null);
+            postIndexUnit.setPdfDescription(null);
+            postIndexUnit.setFilename(null);
+
+            User user = userService.findOne(elasticPostDTO.getUser_id());
+
+            ElasticUser elasticUser = new ElasticUser();
+            elasticUser.setUsername(user.getUsername());
+            postIndexUnit.setUser(elasticUser);
+
+            ElasticCommunity community = elasticCommunityService.findByCommunityId(elasticPostDTO.getCommunity_id());
+            postIndexUnit.setCommunity(community);
+
+            if (elasticPostDTO.getFlair_id() != 0) {
+                Flair flair = flairService.findOne(elasticPostDTO.getFlair_id());
+
+                ElasticFlair elasticFlair = new ElasticFlair();
+                elasticFlair.setFlair_id(flair.getFlair_id());
+                elasticFlair.setName(flair.getName());
+
+                postIndexUnit.setFlair(elasticFlair);
+            }
+
             index(postIndexUnit);
+
+            Integer numberOfPosts = postService.countPostsByCommunityId(elasticPostDTO.getCommunity_id());
+            List<ElasticPost> elasticPosts = findAllByCommunityName(community.getName());
+            double totalKarma = 0.0;
+            for (ElasticPost eachElasticPost: elasticPosts) {
+                totalKarma += eachElasticPost.getKarma();
+            }
+
+            Double averageKarmaOfCommunity = totalKarma/numberOfPosts;
+
+            community.setNumberOfPosts(numberOfPosts);
+            community.setAverageKarma(averageKarmaOfCommunity);
+            elasticCommunityService.index(community);
         }
     }
 
@@ -201,6 +235,78 @@ public class ElasticPostService {
                 .must(pdfDescriptionQuery);
 
         return ElasticPostMapper.mapDtos(searchBoolQuery(boolQueryPDFDescription));
+    }
+
+    public List<ElasticPostResponseDTO> findAllByTwoFields(String first, String second, Integer selectedFields, String boolQueryType) {
+        //Title and Text
+        if (selectedFields == 1) {
+            QueryBuilder titleQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("title", first));
+            QueryBuilder textQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("text", second));
+
+            if (Objects.equals(boolQueryType, "OR")) {
+                BoolQueryBuilder boolQueryTitleAndText = QueryBuilders
+                        .boolQuery()
+                        .should(titleQuery)
+                        .should(textQuery);
+
+                return ElasticPostMapper.mapDtos(searchBoolQuery(boolQueryTitleAndText));
+            }
+            else if (Objects.equals(boolQueryType, "AND")) {
+                BoolQueryBuilder boolQueryTitleAndText = QueryBuilders
+                        .boolQuery()
+                        .must(titleQuery)
+                        .must(textQuery);
+
+                return ElasticPostMapper.mapDtos(searchBoolQuery(boolQueryTitleAndText));
+            }
+        }
+
+        //Title and PDF Description
+        if (selectedFields == 2) {
+            QueryBuilder titleQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("title", first));
+            QueryBuilder pdfDescriptionQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("pdfDescription", second));
+
+            if (Objects.equals(boolQueryType, "OR")) {
+                BoolQueryBuilder boolQueryTitleAndPDFDescription = QueryBuilders
+                        .boolQuery()
+                        .should(titleQuery)
+                        .should(pdfDescriptionQuery);
+
+                return ElasticPostMapper.mapDtos(searchBoolQuery(boolQueryTitleAndPDFDescription));
+            }
+            else if (Objects.equals(boolQueryType, "AND")) {
+                BoolQueryBuilder boolQueryTitleAndPDFDescription = QueryBuilders
+                        .boolQuery()
+                        .must(titleQuery)
+                        .must(pdfDescriptionQuery);
+
+                return ElasticPostMapper.mapDtos(searchBoolQuery(boolQueryTitleAndPDFDescription));
+            }
+        }
+
+        //Text and PDF Description -OR-
+        if (selectedFields == 3) {
+            QueryBuilder textQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("text", first));
+            QueryBuilder pdfDescriptionQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("pdfDescription", second));
+
+            if (Objects.equals(boolQueryType, "OR")) {
+                BoolQueryBuilder boolQueryTextAndPDFDescription = QueryBuilders
+                        .boolQuery()
+                        .should(textQuery)
+                        .should(pdfDescriptionQuery);
+
+                return ElasticPostMapper.mapDtos(searchBoolQuery(boolQueryTextAndPDFDescription));
+            }
+            else if (Objects.equals(boolQueryType, "AND")) {
+                BoolQueryBuilder boolQueryTextAndPDFDescription = QueryBuilders
+                        .boolQuery()
+                        .must(textQuery)
+                        .must(pdfDescriptionQuery);
+
+                return ElasticPostMapper.mapDtos(searchBoolQuery(boolQueryTextAndPDFDescription));
+            }
+        }
+        return null;
     }
 
     public List<ElasticPost> findAllByFlairName(String name) {

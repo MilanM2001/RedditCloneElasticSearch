@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface ElasticCommunityRepository extends ElasticsearchRepository<ElasticCommunity, Integer> {
     List<ElasticCommunity> findAll();
+    void deleteByName(String name);
+    ElasticCommunity findByName(String name);
 }

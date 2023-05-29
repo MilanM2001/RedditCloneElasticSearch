@@ -1,6 +1,5 @@
 package sr57.ftn.reddit.project.controller;
 
-import co.elastic.clients.elasticsearch.nodes.Http;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;

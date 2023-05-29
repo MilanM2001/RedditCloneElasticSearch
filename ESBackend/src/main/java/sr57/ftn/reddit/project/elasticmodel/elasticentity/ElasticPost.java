@@ -7,9 +7,6 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.Setting;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Setter
 @Getter
 @Builder

@@ -253,6 +253,7 @@ export class CommunitiesComponent implements OnInit {
         })
     }
 
+    //Search by two fields
     if (search_option == 6) {
       console.log(first)
       console.log(second)

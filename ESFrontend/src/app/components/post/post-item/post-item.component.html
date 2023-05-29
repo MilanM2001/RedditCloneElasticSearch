@@ -5,6 +5,7 @@
     <mat-card-subtitle *ngIf="post.flair != null" class="post-flair">{{post.flair.name}}</mat-card-subtitle>
     <mat-card-title class="post-user">{{post.user.username}}</mat-card-title>
     <mat-card-title class="post-title" [routerLink]="['/Post-View', post.post_id]">{{post.title}}</mat-card-title>
+    <h2>{{post.text}}</h2>
     <mat-card-content>
       <p class="post-karma">Karma: {{post.karma}}</p>
       <p class="post-numberOfComments">Comments: {{post.numberOfComments}}</p>

@@ -121,6 +121,23 @@ export class PostAddComponent implements OnInit {
                   console.log(error)
                 }
               })
+          } else {
+            uploadModel.append("post_id", String(newPost_id))
+            uploadModel.append("title", addPost.title)
+            uploadModel.append("text", addPost.text)
+            uploadModel.append("community_id", String(this.community_id))
+            uploadModel.append("user_id", String(this.myUserId))
+            uploadModel.append("flair_id", String(addPost.flair_id))
+            this.postService.AddElasticPDF(uploadModel)
+              .subscribe({
+                next: (data) => {
+                  console.log("ADDED WITHOUT PDF")
+                  this.router.navigateByUrl("/Main-Page")
+                },
+                error: (error) => {
+                  console.log(error)
+                }
+              })
           }
         }
       })

@@ -21,7 +21,10 @@ import sr57.ftn.reddit.project.model.dto.communityDTOs.UpdateCommunityDTO;
 import sr57.ftn.reddit.project.model.dto.flairDTOs.FlairDTO;
 import sr57.ftn.reddit.project.model.dto.postDTOs.PostDTO;
 import sr57.ftn.reddit.project.model.dto.ruleDTOs.RuleDTO;
-import sr57.ftn.reddit.project.model.entity.*;
+import sr57.ftn.reddit.project.model.entity.Community;
+import sr57.ftn.reddit.project.model.entity.Flair;
+import sr57.ftn.reddit.project.model.entity.Post;
+import sr57.ftn.reddit.project.model.entity.Rule;
 import sr57.ftn.reddit.project.service.*;
 import sr57.ftn.reddit.project.util.SearchType;
 
@@ -255,14 +258,15 @@ public class CommunityController {
         return new ResponseEntity<>(modelMapper.map(community, SuspendCommunityDTO.class), HttpStatus.OK);
     }
 
-    //Not used
-    @DeleteMapping(value = "/delete/{community_id}")
+
+    @DeleteMapping(value = "/delete/{name}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> DeleteCommunity(@PathVariable("community_id") Integer community_id) {
-        Community community = communityService.findOne(community_id);
+    public ResponseEntity<Void> DeleteCommunity(@PathVariable("name") String name) {
+        ElasticCommunity community = elasticCommunityService.findOneByName(name);
 
         if (community != null) {
-            communityService.remove(community_id);
+            communityService.remove(community.getCommunity_id());
+            elasticCommunityService.deleteByName(name);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

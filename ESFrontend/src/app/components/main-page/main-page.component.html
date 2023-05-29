@@ -6,9 +6,11 @@
                     [ngClass]="{ 'is-invalid': submittedOption && optionGroup['search_option'].errors }">
                     <mat-radio-button class="radio-button" value="1">Title</mat-radio-button>
                     <mat-radio-button class="radio-button" value="2">Text</mat-radio-button>
-                    <mat-radio-button class="radio-button" value="3">Karma</mat-radio-button>
-                    <mat-radio-button class="radio-button" value="4">Flair</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="3">PDF Description</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="4">Karma</mat-radio-button>
                     <mat-radio-button class="radio-button" value="5">Comment number</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="6">Flair</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="7">Two Fields</mat-radio-button>
                 </mat-radio-group>
                 <div *ngIf="submittedOption && optionGroup['search_option'].errors" class="invalid-feedback">
                     <div *ngIf="optionGroup['search_option'].errors['required']">Choose an option.</div>
@@ -33,7 +35,7 @@
             </form>
         </div>
 
-        <form [formGroup]="searchFormInputGroup">
+        <form [formGroup]="searchInputFormGroup">
 
             <div class="mb-3 w-25">
                 <input *ngIf="isSearchingText()" type="text" class="form-control" formControlName="search_input"
@@ -45,7 +47,50 @@
 
         </form>
 
-        <form [formGroup]="searchFormNumbersGroup">
+        <form [formGroup]="searchTwoInputsFormGroup">
+
+            <div *ngIf="isSearchingTwoTexts()" class="radio-group">
+                <mat-radio-group formControlName="selected_fields"
+                    [ngClass]="{ 'is-invalid': submittedTwoSearches && searchTwoInputsGroup['selected_fields'].errors }">
+                    <mat-radio-button class="radio-button" value="1">Title And Text</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="2">Title And PDF Description</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="3">Text And PDF Description</mat-radio-button>
+                </mat-radio-group>
+                <div *ngIf="submittedTwoSearches && searchTwoInputsGroup['selected_fields'].errors" class="invalid-feedback">
+                    <div *ngIf="searchTwoInputsGroup['selected_fields'].errors['required']">Choose an option.</div>
+                </div>
+            </div>
+
+            <div *ngIf="isSearchingTwoTexts()" class="radio-group">
+                <mat-radio-group formControlName="boolQueryType"
+                    [ngClass]="{ 'is-invalid': submittedTwoSearches && searchTwoInputsGroup['boolQueryType'].errors }">
+                    <mat-radio-button class="radio-button" value="OR">OR</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="AND">AND</mat-radio-button>
+                </mat-radio-group>
+                <div *ngIf="submittedTwoSearches && searchTwoInputsGroup['boolQueryType'].errors" class="invalid-feedback">
+                    <div *ngIf="searchTwoInputsGroup['boolQueryType'].errors['required']">Choose an option.</div>
+                </div>
+            </div>
+
+            <div *ngIf="isSearchingTwoTexts()" class="mb-3 w-25">
+                <input type="text" class="form-control" formControlName="first" placeholder="First Value"
+                    [ngClass]="{ 'is-invalid': submittedTwoSearches && searchTwoInputsGroup['first'].errors }">
+                    <div *ngIf="submittedTwoSearches && searchTwoInputsGroup['first'].errors" class="invalid-feedback">
+                        <div *ngIf="searchTwoInputsGroup['first'].errors['required']">Enter something.</div>
+                    </div>
+            </div>
+
+            <div *ngIf="isSearchingTwoTexts()" class="mb-3 w-25">
+                <input type="text" class="form-control" formControlName="second" placeholder="Second Value"
+                    [ngClass]="{ 'is-invalid': submittedTwoSearches && searchTwoInputsGroup['second'].errors }">
+                    <div *ngIf="submittedTwoSearches && searchTwoInputsGroup['second'].errors" class="invalid-feedback">
+                        <div *ngIf="searchTwoInputsGroup['second'].errors['required']">Enter something.</div>
+                    </div>
+            </div>
+            
+        </form>
+
+        <form [formGroup]="searchNumbersFormGroup">
 
             <div class="mb-3" *ngIf="isSearchingNumbers()">
                 <mat-card-title class="card-title">From</mat-card-title>
@@ -69,7 +114,7 @@
 
         </form>
 
-        <form [formGroup]="searchFormFlairGroup">
+        <form [formGroup]="searchFlairFormGroup">
 
             <div class="mb-3 w-25" *ngIf="isSearchingFlair()">
                 <mat-select class="form-control" formControlName="flair" id="flair" 
