@@ -18,9 +18,10 @@
     <div class="col-5 col-lg-4">
         <a *ngIf="isLoggedIn()" [routerLink]="['/Post-Add', community.community_id]"><button class="btn btn-primary">Create a Post</button></a>
         <mat-card class="community-view-rules-card">
-            <mat-card-title class="community-view-rules-card-title">Community Rules:</mat-card-title>
+            <mat-card-title class="community-view-rules-card-title">Rules:</mat-card-title>
             <mat-card-content *ngFor="let rule of rules">
                 <mat-card-header class="community-rules-header">{{rule.name}} <mat-icon *ngIf="isLoggedIn()" class="edit-icon" [routerLink]="['/Rule-Edit', rule.rule_id]">edit</mat-icon></mat-card-header>
+                <h3 class="community-rules-h3">-{{rule.description}}</h3>
             </mat-card-content>
         </mat-card>
         <a *ngIf="isLoggedIn()" [routerLink]="['/Rule-Add', community.community_id]"><button class="btn btn-danger">Add Rule</button></a>

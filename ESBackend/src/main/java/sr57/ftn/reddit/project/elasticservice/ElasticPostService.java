@@ -13,10 +13,8 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.SimpleQueryEs;
-import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs.ElasticCommunityResponseDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.ElasticPostDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.ElasticPostResponseDTO;
-import sr57.ftn.reddit.project.elasticmodel.elasticdto.mapper.ElasticCommunityMapper;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.mapper.ElasticPostMapper;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticFlair;
@@ -37,6 +35,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -86,6 +85,7 @@ public class ElasticPostService {
                     postIndexUnit.setText(elasticPostDTO.getText());
                     postIndexUnit.setKarma(1);
                     postIndexUnit.setNumberOfComments(0);
+                    postIndexUnit.setComments(new HashSet<>());
 
                     User user = userService.findOne(elasticPostDTO.getUser_id());
 
@@ -129,6 +129,7 @@ public class ElasticPostService {
             postIndexUnit.setText(elasticPostDTO.getText());
             postIndexUnit.setKarma(1);
             postIndexUnit.setNumberOfComments(0);
+            postIndexUnit.setComments(new HashSet<>());
             postIndexUnit.setPdfDescription(null);
             postIndexUnit.setFilename(null);
 
@@ -195,6 +196,10 @@ public class ElasticPostService {
         elasticPostRepository.save(elasticPost);
     }
 
+    public void remove(Integer post_id) {
+        elasticPostRepository.deleteById(post_id);
+    }
+
     public List<ElasticPost> findAll() {
         return elasticPostRepository.findAll();
     }
@@ -212,7 +217,7 @@ public class ElasticPostService {
 
         BoolQueryBuilder boolQueryTitle = QueryBuilders
                 .boolQuery()
-                .should(titleQuery);
+                .must(titleQuery);
 
         return ElasticPostMapper.mapDtos(searchBoolQuery(boolQueryTitle));
     }
@@ -222,7 +227,7 @@ public class ElasticPostService {
 
         BoolQueryBuilder boolQueryText = QueryBuilders
                 .boolQuery()
-                .should(textQuery);
+                .must(textQuery);
 
         return ElasticPostMapper.mapDtos(searchBoolQuery(boolQueryText));
     }
@@ -237,11 +242,43 @@ public class ElasticPostService {
         return ElasticPostMapper.mapDtos(searchBoolQuery(boolQueryPDFDescription));
     }
 
-    public List<ElasticPostResponseDTO> findAllByTwoFields(String first, String second, Integer selectedFields, String boolQueryType) {
+    public List<ElasticPostResponseDTO> findAllByFlairName(String name, SearchType searchType) {
+        QueryBuilder flairQuery = SearchQueryGenerator.createMatchQueryBuilderTerm(searchType, new SimpleQueryEs("flair.name", name));
+
+        BoolQueryBuilder boolQueryTitle = QueryBuilders
+                .boolQuery()
+                .must(flairQuery);
+
+        return ElasticPostMapper.mapDtos(searchBoolQuery(boolQueryTitle));
+    }
+
+    public List<ElasticPostResponseDTO> findAllByCommentsText(String text, SearchType searchType) {
+        QueryBuilder textQuery = SearchQueryGenerator.createMatchQueryBuilderTerm(searchType, new SimpleQueryEs("comments.text", text));
+
+        BoolQueryBuilder boolQueryTitle = QueryBuilders
+                .boolQuery()
+                .must(textQuery);
+
+        return ElasticPostMapper.mapDtos(searchBoolQuery(boolQueryTitle));
+    }
+
+    public List<ElasticPostResponseDTO> findAllByKarma(double from, double to) {
+        String range = from + "-" + to;
+        QueryBuilder karmaQuery = SearchQueryGenerator.createRangeQueryBuilder(new SimpleQueryEs("karma", range));
+        return ElasticPostMapper.mapDtos(searchBoolQuery(karmaQuery));
+    }
+
+    public List<ElasticPostResponseDTO> findAllByNumberOfComments(double from, double to) {
+        String range = from + "-" + to;
+        QueryBuilder numberOfCommentsQuery = SearchQueryGenerator.createRangeQueryBuilder(new SimpleQueryEs("numberOfComments", range));
+        return ElasticPostMapper.mapDtos(searchBoolQuery(numberOfCommentsQuery));
+    }
+
+    public List<ElasticPostResponseDTO> findAllByTwoFields(String first, String second, Integer selectedFields, String boolQueryType, SearchType searchType) {
         //Title and Text
         if (selectedFields == 1) {
-            QueryBuilder titleQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("title", first));
-            QueryBuilder textQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("text", second));
+            QueryBuilder titleQuery = SearchQueryGenerator.createMatchQueryBuilderTerm(searchType, new SimpleQueryEs("title", first));
+            QueryBuilder textQuery = SearchQueryGenerator.createMatchQueryBuilderTerm(searchType, new SimpleQueryEs("text", second));
 
             if (Objects.equals(boolQueryType, "OR")) {
                 BoolQueryBuilder boolQueryTitleAndText = QueryBuilders
@@ -263,8 +300,8 @@ public class ElasticPostService {
 
         //Title and PDF Description
         if (selectedFields == 2) {
-            QueryBuilder titleQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("title", first));
-            QueryBuilder pdfDescriptionQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("pdfDescription", second));
+            QueryBuilder titleQuery = SearchQueryGenerator.createMatchQueryBuilderTerm(searchType, new SimpleQueryEs("title", first));
+            QueryBuilder pdfDescriptionQuery = SearchQueryGenerator.createMatchQueryBuilderTerm(searchType, new SimpleQueryEs("pdfDescription", second));
 
             if (Objects.equals(boolQueryType, "OR")) {
                 BoolQueryBuilder boolQueryTitleAndPDFDescription = QueryBuilders
@@ -286,8 +323,8 @@ public class ElasticPostService {
 
         //Text and PDF Description -OR-
         if (selectedFields == 3) {
-            QueryBuilder textQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("text", first));
-            QueryBuilder pdfDescriptionQuery = SearchQueryGenerator.createMatchQueryBuilder(new SimpleQueryEs("pdfDescription", second));
+            QueryBuilder textQuery = SearchQueryGenerator.createMatchQueryBuilderTerm(searchType, new SimpleQueryEs("text", first));
+            QueryBuilder pdfDescriptionQuery = SearchQueryGenerator.createMatchQueryBuilderTerm(searchType, new SimpleQueryEs("pdfDescription", second));
 
             if (Objects.equals(boolQueryType, "OR")) {
                 BoolQueryBuilder boolQueryTextAndPDFDescription = QueryBuilders
@@ -309,22 +346,6 @@ public class ElasticPostService {
         return null;
     }
 
-    public List<ElasticPost> findAllByFlairName(String name) {
-        return elasticPostRepository.findAllByFlair_Name(name);
-    }
-
-    public List<ElasticPostResponseDTO> findByKarma(double from, double to) {
-        String range = from + "-" + to;
-        QueryBuilder karmaQuery = SearchQueryGenerator.createRangeQueryBuilder(new SimpleQueryEs("karma", range));
-        return ElasticPostMapper.mapDtos(searchBoolQuery(karmaQuery));
-    }
-
-    public List<ElasticPostResponseDTO> findByNumberOfComments(double from, double to) {
-        String range = from + "-" + to;
-        QueryBuilder numberOfCommentsQuery = SearchQueryGenerator.createRangeQueryBuilder(new SimpleQueryEs("numberOfComments", range));
-        return ElasticPostMapper.mapDtos(searchBoolQuery(numberOfCommentsQuery));
-    }
-
     private SearchHits<ElasticPost> searchBoolQuery(QueryBuilder boolQueryBuilder) {
 
         NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
@@ -332,9 +353,5 @@ public class ElasticPostService {
                 .build();
 
         return elasticsearchRestTemplate.search(searchQuery, ElasticPost.class, IndexCoordinates.of("posts"));
-    }
-
-    public void remove(Integer post_id) {
-        elasticPostRepository.deleteById(post_id);
     }
 }

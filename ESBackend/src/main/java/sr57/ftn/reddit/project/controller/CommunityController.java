@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs.ElasticCommunityDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs.ElasticCommunityResponseDTO;
+import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.ElasticPostResponseDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticPost;
 import sr57.ftn.reddit.project.elasticservice.ElasticCommunityService;
@@ -113,9 +114,19 @@ public class CommunityController {
         return new ResponseEntity<>(elasticCommunities, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/findAllByTwoFields/{first}/{second}/{selectedFields}/{boolQueryType}")
-    public ResponseEntity<List<ElasticCommunityResponseDTO>> GetAllByTwoFields(@PathVariable String first, @PathVariable String second, @PathVariable Integer selectedFields, @PathVariable String boolQueryType) {
-        List<ElasticCommunityResponseDTO> elasticCommunities = elasticCommunityService.findAllByTwoFields(first, second, selectedFields, boolQueryType);
+    @GetMapping(value = "/findAllByRulesDescription/{description}/{searchType}")
+    public ResponseEntity<List<ElasticCommunityResponseDTO>> GetAllByCommentsText(@PathVariable String description, @PathVariable String searchType) {
+        SearchType search = SearchType.valueOf(searchType);
+        List<ElasticCommunityResponseDTO> elasticPosts = elasticCommunityService.findAllByRuleDescription(description, search);
+
+        return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/findAllByTwoFields/{first}/{second}/{selectedFields}/{boolQueryType}/{searchType}")
+    public ResponseEntity<List<ElasticCommunityResponseDTO>> GetAllByTwoFields(@PathVariable String first, @PathVariable String second, @PathVariable Integer selectedFields,
+                                                                               @PathVariable String boolQueryType, @PathVariable String searchType) {
+        SearchType search = SearchType.valueOf(searchType);
+        List<ElasticCommunityResponseDTO> elasticCommunities = elasticCommunityService.findAllByTwoFields(first, second, selectedFields, boolQueryType, search);
 
         return new ResponseEntity<>(elasticCommunities, HttpStatus.OK);
     }

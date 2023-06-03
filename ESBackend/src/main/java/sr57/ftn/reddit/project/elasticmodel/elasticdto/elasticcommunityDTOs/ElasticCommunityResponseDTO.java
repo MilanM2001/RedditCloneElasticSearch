@@ -1,6 +1,9 @@
 package sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs;
 
 import lombok.*;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticRule;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,4 +18,5 @@ public class ElasticCommunityResponseDTO {
     private Integer numberOfPosts;
     private Double averageKarma;
     private String pdfDescription;
+    private Set<ElasticRule> rules;
 }

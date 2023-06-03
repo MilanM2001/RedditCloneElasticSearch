@@ -19,6 +19,7 @@ public class ElasticPostMapper {
                 .user(elasticPost.getUser())
                 .flair(elasticPost.getFlair())
                 .pdfDescription(elasticPost.getPdfDescription())
+                .comments(elasticPost.getComments())
                 .build();
     }
 

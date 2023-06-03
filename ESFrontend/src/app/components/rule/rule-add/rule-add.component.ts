@@ -67,7 +67,7 @@ export class RuleAddComponent implements OnInit {
     this.ruleService.AddRule(this.community_id, addRule)
       .subscribe({
         next: (data: Rule) => {
-          this.router.navigate(['/View-Community' + this.community_id])
+          this.router.navigate(['/Community-View/' + this.community_id])
         },
         error: (error) => {
           console.log(error);

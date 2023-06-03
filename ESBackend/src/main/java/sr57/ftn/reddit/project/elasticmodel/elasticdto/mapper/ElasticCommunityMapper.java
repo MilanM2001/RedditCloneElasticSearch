@@ -16,6 +16,7 @@ public class ElasticCommunityMapper {
                 .numberOfPosts(elasticCommunity.getNumberOfPosts())
                 .averageKarma(elasticCommunity.getAverageKarma())
                 .pdfDescription(elasticCommunity.getPdfDescription())
+                .rules(elasticCommunity.getRules())
                 .build();
     }
 

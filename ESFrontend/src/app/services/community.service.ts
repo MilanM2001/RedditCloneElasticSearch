@@ -39,8 +39,12 @@ export class CommunityService {
         return this.http.get<Community[]>(`${environment.baseApiUrl}/${this.url}/findAllByPDFDescription/` + pdfDescription + '/' + searchType);
     }
 
-    public GetAllByTwoFields(first: String, second: String, selected_fields: number, boolQueryType: String): Observable<Community[]> {
-        return this.http.get<Community[]>(`${environment.baseApiUrl}/${this.url}/findAllByTwoFields/` + first + '/' + second + '/' + selected_fields + '/' + boolQueryType);
+    public GetAllByRulesDescription(description: String, searchType: String): Observable<Community[]> {
+        return this.http.get<Community[]>(`${environment.baseApiUrl}/${this.url}/findAllByRulesDescription/` + description + '/' + searchType);
+    }
+
+    public GetAllByTwoFields(first: String, second: String, selected_fields: number, boolQueryType: String, searchType: String): Observable<Community[]> {
+        return this.http.get<Community[]>(`${environment.baseApiUrl}/${this.url}/findAllByTwoFields/` + first + '/' + second + '/' + selected_fields + '/' + boolQueryType + '/' + searchType);
     }
 
     public GetAllByNumberOfPosts(from: String, to: String): Observable<Community[]> {

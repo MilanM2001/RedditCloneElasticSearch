@@ -29,8 +29,15 @@
 }
 
 .community-rules-header {
-    text-align: center;
+    text-align: left;
+    font-size: 25px;
+    color: red;
+}
+
+.community-rules-h3 {
+    text-align: left;
     font-size: 20px;
+    margin-left: 27px;
 }
 
 .edit-icon {
@@ -41,7 +48,7 @@
 .community-view-rules-card-title {
     font-size: 25px;
     margin-bottom: 15px;
-    color: red;
+    color: black;
 }
 
 .btn-primary {

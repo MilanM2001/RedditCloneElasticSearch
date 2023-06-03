@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs.ElasticCommunityResponseDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.ElasticPostDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticpostDTOs.ElasticPostResponseDTO;
 import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
@@ -110,30 +109,41 @@ public class PostController {
         return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
     }
 
-    @GetMapping(value = "findAllByTwoFields/{first}/{second}/{selectedFields}/{boolQueryType}")
-    public ResponseEntity<List<ElasticPostResponseDTO>> GetAllByTwoFields(@PathVariable String first, @PathVariable String second, @PathVariable Integer selectedFields, @PathVariable String boolQueryType) {
-        List<ElasticPostResponseDTO> elasticPosts = elasticPostService.findAllByTwoFields(first, second, selectedFields, boolQueryType);
+    @GetMapping(value = "/findAllByFlairName/{name}/{searchType}")
+    public ResponseEntity<List<ElasticPostResponseDTO>> GetAllByFlairName(@PathVariable String name, @PathVariable String searchType) {
+//        SearchType search = SearchType.valueOf(searchType);
+        List<ElasticPostResponseDTO> elasticPosts = elasticPostService.findAllByFlairName(name, SearchType.PHRASE);
 
         return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
     }
 
-    @GetMapping(value = "findAllByFlairName/{name}")
-    public ResponseEntity<List<ElasticPost>> GetAllByFlairName(@PathVariable String name) {
-        List<ElasticPost> elasticPosts = elasticPostService.findAllByFlairName(name);
+    @GetMapping(value = "/findAllByCommentsText/{text}/{searchType}")
+    public ResponseEntity<List<ElasticPostResponseDTO>> GetAllByCommentsText(@PathVariable String text, @PathVariable String searchType) {
+        SearchType search = SearchType.valueOf(searchType);
+        List<ElasticPostResponseDTO> elasticPosts = elasticPostService.findAllByCommentsText(text, search);
 
         return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
     }
 
     @GetMapping("/karma/{from}/to/{to}")
-    public ResponseEntity<List<ElasticPostResponseDTO>> GetByKarmaRange(@PathVariable Integer from, @PathVariable Integer to) {
-        List<ElasticPostResponseDTO> elasticPosts = elasticPostService.findByKarma(from, to);
+    public ResponseEntity<List<ElasticPostResponseDTO>> GetAllByKarmaRange(@PathVariable Integer from, @PathVariable Integer to) {
+        List<ElasticPostResponseDTO> elasticPosts = elasticPostService.findAllByKarma(from, to);
 
         return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
     }
 
     @GetMapping("/numberOfComments/{from}/to/{to}")
-    public ResponseEntity<List<ElasticPostResponseDTO>> GetByNumberOfCommentsRange(@PathVariable Integer from, @PathVariable Integer to) {
-        List<ElasticPostResponseDTO> elasticPosts = elasticPostService.findByNumberOfComments(from, to);
+    public ResponseEntity<List<ElasticPostResponseDTO>> GetAllByNumberOfCommentsRange(@PathVariable Integer from, @PathVariable Integer to) {
+        List<ElasticPostResponseDTO> elasticPosts = elasticPostService.findAllByNumberOfComments(from, to);
+
+        return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "findAllByTwoFields/{first}/{second}/{selectedFields}/{boolQueryType}/{searchType}")
+    public ResponseEntity<List<ElasticPostResponseDTO>> GetAllByTwoFields(@PathVariable String first, @PathVariable String second, @PathVariable Integer selectedFields,
+                                                                          @PathVariable String boolQueryType, @PathVariable String searchType) {
+        SearchType search = SearchType.valueOf(searchType);
+        List<ElasticPostResponseDTO> elasticPosts = elasticPostService.findAllByTwoFields(first, second, selectedFields, boolQueryType, search);
 
         return new ResponseEntity<>(elasticPosts, HttpStatus.OK);
     }

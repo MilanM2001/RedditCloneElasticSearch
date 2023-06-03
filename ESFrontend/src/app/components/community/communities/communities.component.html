@@ -7,9 +7,10 @@
                     <mat-radio-button class="radio-button" value="1">Name</mat-radio-button>
                     <mat-radio-button class="radio-button" value="2">Description</mat-radio-button>
                     <mat-radio-button class="radio-button" value="3">PDF Desc.</mat-radio-button>
-                    <mat-radio-button class="radio-button" value="4">Number of Posts</mat-radio-button>
-                    <mat-radio-button class="radio-button" value="5">Average Karma</mat-radio-button>
-                    <mat-radio-button class="radio-button" value="6">Two Fields</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="4">Rule Desc.</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="5">Number of Posts</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="6">Average Karma</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="7">Two Fields</mat-radio-button>
                 </mat-radio-group>
                 <div *ngIf="submittedOption && searchOptionGroup['search_option'].errors" class="invalid-feedback">
                     <div *ngIf="searchOptionGroup['search_option'].errors['required']">Choose an option.</div>
@@ -17,7 +18,7 @@
             </div>
         </form>
 
-        <div *ngIf="isSearchingText()">
+        <div *ngIf="isSearchingText() || isSearchingTwoTexts()">
             <mat-card-title class="search-bar">Search Type</mat-card-title>
             <form [formGroup]="searchTypeFormGroup">
                 <div class="radio-group">

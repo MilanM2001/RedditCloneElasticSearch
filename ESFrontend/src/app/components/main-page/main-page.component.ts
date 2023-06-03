@@ -135,7 +135,7 @@ export class MainPageComponent implements OnInit {
     let search_option;
     search_option = this.optionFormGroup.get('search_option')?.value;
 
-    if (search_option == 1 || search_option == 2 || search_option == 3) {
+    if (search_option == 1 || search_option == 2 || search_option == 3 || search_option == 4) {
       if (this.searchInputFormGroup.invalid) {
         return;
       }
@@ -144,20 +144,23 @@ export class MainPageComponent implements OnInit {
       }
     }
 
-    if (search_option == 4 || search_option == 5) {
+    if (search_option == 5 || search_option == 6) {
       if (this.searchNumbersFormGroup.invalid) {
         return;
       }
     }
 
-    if (search_option == 6) {
+    if (search_option == 7) {
       if (this.searchFlairFormGroup.invalid) {
         return;
       }
     }
 
-    if (search_option == 7) {
+    if (search_option == 8) {
       if (this.searchTwoInputsFormGroup.invalid) {
+        return
+      }
+      if (this.searchTypeFormGroup.invalid) {
         return
       }
     }
@@ -250,8 +253,27 @@ export class MainPageComponent implements OnInit {
         })
     }
 
-    //Search by Number of Posts
+    //Search by Comment Text
     if (search_option == 4) {
+      this.postService.GetAllByCommentText(search_input, searchType)
+        .subscribe({
+          next: (data: Post[]) => {
+            this.posts = data
+            if (data.length == 0) {
+              this.no_results = true
+            }
+            if (data.length > 0) {
+              this.no_results = false
+            }
+          },
+          error: (error) => {
+            console.log(error)
+          }
+        })
+    }
+
+    //Search by Number of Posts
+    if (search_option == 5) {
       this.postService.GetAllByKarma(from, to)
         .subscribe({
           next: (data: Post[]) => {
@@ -270,7 +292,7 @@ export class MainPageComponent implements OnInit {
     }
 
     //Search by Number of Comments
-    if (search_option == 5) {
+    if (search_option == 6) {
       this.postService.GetAllByNumberOfComments(from, to)
         .subscribe({
           next: (data: Post[]) => {
@@ -289,8 +311,8 @@ export class MainPageComponent implements OnInit {
     }
 
     //Search by Flair
-    if (search_option == 6) {
-      this.postService.GetAllByFlairName(flair)
+    if (search_option == 7) {
+      this.postService.GetAllByFlairName(flair, "PHRASE")
         .subscribe({
           next: (data: Post[]) => {
             this.posts = data;
@@ -308,12 +330,13 @@ export class MainPageComponent implements OnInit {
     }
 
     //Search by two fields
-    if (search_option == 7) {
+    if (search_option == 8) {
       console.log(first)
       console.log(second)
       console.log(selected_fields)
       console.log(boolQueryType)
-      this.postService.GetAllByTwoFields(first, second, selected_fields, boolQueryType)
+      console.log(searchType)
+      this.postService.GetAllByTwoFields(first, second, selected_fields, boolQueryType, searchType)
         .subscribe({
           next: (data: Post[]) => {
             this.posts = data
@@ -335,7 +358,7 @@ export class MainPageComponent implements OnInit {
   isSearchingText(): boolean {
     let search_option = this.optionFormGroup.get('search_option')?.value;
 
-    if (search_option == 1 || search_option == 2 || search_option == 3) {
+    if (search_option == 1 || search_option == 2 || search_option == 3 || search_option == 4) {
       return true;
     } else {
       return false
@@ -345,7 +368,7 @@ export class MainPageComponent implements OnInit {
   isSearchingNumbers(): boolean {
     let search_option = this.optionFormGroup.get('search_option')?.value;
 
-    if (search_option == 4 || search_option == 5) {
+    if (search_option == 5 || search_option == 6) {
       return true;
     } else {
       return false;
@@ -355,7 +378,7 @@ export class MainPageComponent implements OnInit {
   isSearchingFlair(): boolean {
     let search_option = this.optionFormGroup.get('search_option')?.value;
 
-    if (search_option == 6) {
+    if (search_option == 7) {
       return true;
     } else {
       return false;
@@ -365,7 +388,7 @@ export class MainPageComponent implements OnInit {
   isSearchingTwoTexts(): boolean {
     let search_option = this.optionFormGroup.get('search_option')?.value
 
-    if (search_option == 7) {
+    if (search_option == 8) {
       return true
     } else {
       return false

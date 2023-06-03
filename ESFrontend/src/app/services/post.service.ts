@@ -37,20 +37,24 @@ export class PostService {
     return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/findAllByPDFDescription/` + pdfDescription + '/' + searchType);
   }
 
-  public GetAllByTwoFields(first: String, second: String, selected_fields: number, boolQueryType: String): Observable<Post[]> {
-    return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/findAllByTwoFields/` + first + '/' + second + '/' + selected_fields + '/' + boolQueryType);
+  public GetAllByCommentText(text: String, searchType: String): Observable<Post[]> {
+    return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/findAllByCommentsText/` + text + '/' + searchType);
   }
 
   public GetAllByKarma(from: String, to: String): Observable<Post[]> {
     return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/karma/` + from + `/to/` + to);
   }
 
-  public GetAllByFlairName(name: String): Observable<Post[]> {
-    return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/findAllByFlairName/` + name);
+  public GetAllByFlairName(name: String, searchType: String): Observable<Post[]> {
+    return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/findAllByFlairName/` + name + "/" + searchType);
   }
 
   public GetAllByNumberOfComments(from: String, to: String): Observable<Post[]> {
     return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/numberOfComments/` + from + `/to/` + to);
+  }
+
+  public GetAllByTwoFields(first: String, second: String, selected_fields: number, boolQueryType: String, searchType: String): Observable<Post[]> {
+    return this.http.get<Post[]>(`${environment.baseApiUrl}/${this.url}/findAllByTwoFields/` + first + '/' + second + '/' + selected_fields + '/' + boolQueryType + '/' + searchType);
   }
 
   public GetPostComments(post_id: number): Observable<Comment[]> {

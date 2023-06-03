@@ -6,11 +6,12 @@
                     [ngClass]="{ 'is-invalid': submittedOption && optionGroup['search_option'].errors }">
                     <mat-radio-button class="radio-button" value="1">Title</mat-radio-button>
                     <mat-radio-button class="radio-button" value="2">Text</mat-radio-button>
-                    <mat-radio-button class="radio-button" value="3">PDF Description</mat-radio-button>
-                    <mat-radio-button class="radio-button" value="4">Karma</mat-radio-button>
-                    <mat-radio-button class="radio-button" value="5">Comment number</mat-radio-button>
-                    <mat-radio-button class="radio-button" value="6">Flair</mat-radio-button>
-                    <mat-radio-button class="radio-button" value="7">Two Fields</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="3">PDF Desc.</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="4">Comment Text</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="5">Karma</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="6">Comment number</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="7">Flair</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="8">Two Fields</mat-radio-button>
                 </mat-radio-group>
                 <div *ngIf="submittedOption && optionGroup['search_option'].errors" class="invalid-feedback">
                     <div *ngIf="optionGroup['search_option'].errors['required']">Choose an option.</div>
@@ -18,7 +19,7 @@
             </div>
         </form>
 
-        <div *ngIf="isSearchingText()">
+        <div *ngIf="isSearchingText() || isSearchingTwoTexts()">
             <mat-card-title class="search-bar">Search Type</mat-card-title>
             <form [formGroup]="searchTypeFormGroup">
                 <div class="radio-group">

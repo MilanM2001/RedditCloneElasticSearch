@@ -6,6 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticCommunity;
+import sr57.ftn.reddit.project.elasticmodel.elasticentity.ElasticRule;
+import sr57.ftn.reddit.project.elasticservice.ElasticCommunityService;
 import sr57.ftn.reddit.project.model.dto.ruleDTOs.AddRuleDTO;
 import sr57.ftn.reddit.project.model.dto.ruleDTOs.RuleDTO;
 import sr57.ftn.reddit.project.model.dto.ruleDTOs.UpdateRuleDTO;
@@ -13,18 +16,22 @@ import sr57.ftn.reddit.project.model.entity.Rule;
 import sr57.ftn.reddit.project.service.CommunityService;
 import sr57.ftn.reddit.project.service.RuleService;
 
+import java.util.Set;
+
 @RestController
 @RequestMapping("api/rules")
 public class RuleController {
     final RuleService ruleService;
     final CommunityService communityService;
     final ModelMapper modelMapper;
+    final ElasticCommunityService elasticCommunityService;
 
     @Autowired
-    public RuleController(RuleService ruleService, CommunityService communityService, ModelMapper modelMapper) {
+    public RuleController(RuleService ruleService, CommunityService communityService, ModelMapper modelMapper, ElasticCommunityService elasticCommunityService) {
         this.ruleService = ruleService;
         this.communityService = communityService;
         this.modelMapper = modelMapper;
+        this.elasticCommunityService = elasticCommunityService;
     }
 
     @GetMapping("/single/{rule_id}")
@@ -44,6 +51,18 @@ public class RuleController {
         newRule.setCommunity(communityService.findOne(community_id));
 
         newRule = ruleService.save(newRule);
+
+        ElasticCommunity elasticCommunity = elasticCommunityService.findByCommunityId(community_id);
+
+        ElasticRule elasticRule = new ElasticRule();
+        elasticRule.setDescription(addRuleDTO.getDescription());
+
+        Set<ElasticRule> communityRules = elasticCommunity.getRules();
+        communityRules.add(elasticRule);
+        elasticCommunity.setRules(communityRules);
+
+        elasticCommunityService.index(elasticCommunity);
+
         return new ResponseEntity<>(modelMapper.map(newRule, AddRuleDTO.class), HttpStatus.CREATED);
     }
 

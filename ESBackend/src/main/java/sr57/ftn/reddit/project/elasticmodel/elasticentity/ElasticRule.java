@@ -7,13 +7,11 @@ import lombok.Setter;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import javax.persistence.Id;
-
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ElasticComment {
+public class ElasticRule {
     @Field(type = FieldType.Text)
-    private String text;
+    private String description;
 }

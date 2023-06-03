@@ -109,7 +109,7 @@ export class CommunitiesComponent implements OnInit {
     let search_option;
     search_option = this.searchOptionFormGroup.get('search_option')?.value;
 
-    if (search_option == 1 || search_option == 2 || search_option == 3) {
+    if (search_option == 1 || search_option == 2 || search_option == 3 || search_option == 4) {
       if (this.searchInputFormGroup.invalid) {
         return
       }
@@ -118,14 +118,17 @@ export class CommunitiesComponent implements OnInit {
       }
     }
 
-    if (search_option == 4 || search_option == 5) {
+    if (search_option == 5 || search_option == 6) {
       if (this.searchNumbersFormGroup.invalid) {
         return
       }
     }
 
-    if (search_option == 6) {
+    if (search_option == 7) {
       if (this.searchTwoInputsFormGroup.invalid) {
+        return
+      }
+      if (this.searchTypeFormGroup.invalid) {
         return
       }
     }
@@ -215,8 +218,27 @@ export class CommunitiesComponent implements OnInit {
         })
     }
 
+        //Search by Rule Description
+        if (search_option == 4) {
+          this.communityService.GetAllByRulesDescription(search_input, searchType)
+            .subscribe({
+              next: (data: Community[]) => {
+                this.communities = data;
+                if (data.length == 0) {
+                  this.no_results == true;
+                }
+                if (data.length > 0) {
+                  this.no_results = false;
+                }
+              },
+              error: (error) => {
+                console.log(error);
+              }
+            })
+        }
+
     //Search by Number of Posts
-    if (search_option == 4) {
+    if (search_option == 5) {
       this.communityService.GetAllByNumberOfPosts(from, to)
         .subscribe({
           next: (data: Community[]) => {
@@ -235,7 +257,7 @@ export class CommunitiesComponent implements OnInit {
     }
 
     //Search by Average Karma
-    if (search_option == 5) {
+    if (search_option == 6) {
       this.communityService.GetAllByAverageKarma(from, to)
         .subscribe({
           next: (data: Community[]) => {
@@ -254,12 +276,13 @@ export class CommunitiesComponent implements OnInit {
     }
 
     //Search by two fields
-    if (search_option == 6) {
+    if (search_option == 7) {
       console.log(first)
       console.log(second)
       console.log(selected_fields)
       console.log(boolQueryType)
-      this.communityService.GetAllByTwoFields(first, second, selected_fields, boolQueryType)
+      console.log(searchType)
+      this.communityService.GetAllByTwoFields(first, second, selected_fields, boolQueryType, searchType)
         .subscribe({
           next: (data: Community[]) => {
             this.communities = data
@@ -275,13 +298,12 @@ export class CommunitiesComponent implements OnInit {
           }
         })
     }
-
   }
 
   isSearchingText(): boolean {
     let search_option = this.searchOptionFormGroup.get('search_option')?.value;
 
-    if (search_option == 1 || search_option == 2 || search_option == 3) {
+    if (search_option == 1 || search_option == 2 || search_option == 3 || search_option == 4) {
       return true;
     } else {
       return false
@@ -291,7 +313,7 @@ export class CommunitiesComponent implements OnInit {
   isSearchingNumbers(): boolean {
     let search_option = this.searchOptionFormGroup.get('search_option')?.value
 
-    if (search_option == 4 || search_option == 5) {
+    if (search_option == 5 || search_option == 6) {
       return true;
     } else {
       return false;
@@ -301,7 +323,7 @@ export class CommunitiesComponent implements OnInit {
   isSearchingTwoTexts(): boolean {
     let search_option = this.searchOptionFormGroup.get('search_option')?.value
 
-    if (search_option == 6) {
+    if (search_option == 7) {
       return true
     } else {
       return false

@@ -6,6 +6,10 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.Setting;
+import org.springframework.lang.NonNull;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -44,6 +48,6 @@ public class ElasticPost {
 
     private String filename;
 
-//    @Field(type = FieldType.Nested)
-//    private Set<ElasticComment> comments = new HashSet<>();
+    @Field(type = FieldType.Nested)
+    private Set<ElasticComment> comments;
 }
