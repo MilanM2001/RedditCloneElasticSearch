@@ -6,12 +6,14 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.elasticsearch.annotations.HighlightField;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.web.multipart.MultipartFile;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.SimpleQueryEs;
 import sr57.ftn.reddit.project.elasticmodel.elasticdto.elasticcommunityDTOs.ElasticCommunityDTO;
@@ -33,6 +35,7 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class ElasticCommunityService {
